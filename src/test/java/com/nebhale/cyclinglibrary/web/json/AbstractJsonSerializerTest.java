@@ -4,6 +4,7 @@ package com.nebhale.cyclinglibrary.web.json;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
+import java.util.Arrays;
 
 import org.junit.After;
 import org.junit.Before;
@@ -47,8 +48,9 @@ public abstract class AbstractJsonSerializerTest<T> {
         assertResult(out.toString());
     }
 
-    protected final void assertValue(String result, String expression, String value) throws ParseException {
-        new JsonPathExpectationsHelper(expression).assertValue(result, value);
+    protected final void assertValue(String result, String expression, Object... value) throws ParseException {
+        Object normalizedValue = value.length == 1 ? value[0] : Arrays.asList(value);
+        new JsonPathExpectationsHelper(expression).assertValue(result, normalizedValue);
     }
 
     protected abstract JsonSerializer<T> getJsonSerializer();

@@ -43,18 +43,18 @@ final class TypeController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/{typeId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    Type read(@PathVariable long typeId) {
+    Type read(@PathVariable Long typeId) {
         return this.typeRepository.read(typeId);
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{typeId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    Type update(@PathVariable long typeId, @RequestBody TypeInput typeInput) {
+    Type update(@PathVariable Long typeId, @RequestBody TypeInput typeInput) {
         return this.typeRepository.update(typeId, typeInput.getName());
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{typeId}")
-    void delete(@PathVariable long typeId) {
+    void delete(@PathVariable Long typeId) {
         this.typeRepository.delete(typeId);
     }
 

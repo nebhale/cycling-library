@@ -8,24 +8,21 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import com.nebhale.cyclinglibrary.model.Type;
+import com.nebhale.cyclinglibrary.model.Collection;
 
 @Component
-final class TypeJsonSerializer extends StdSerializer<Type> {
+final class CollectionJsonSerializer extends StdSerializer<Collection> {
 
-    TypeJsonSerializer() {
-        super(Type.class);
+    CollectionJsonSerializer() {
+        super(Collection.class);
     }
 
     @Override
-    public void serialize(Type value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+    public void serialize(Collection value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
         jgen.writeStartObject();
         jgen.writeStringField("name", value.getName());
         jgen.writeArrayFieldStart("links");
-        jgen.writeObject(new Link("self", "types", value));
-        for (Long collectiondId : value.getCollectionIds()) {
-            jgen.writeObject(new Link("collection", "types", value, "collections", collectiondId));
-        }
+        jgen.writeObject(new Link("self", "types", value.getTypeId(), "collections", value));
         jgen.writeEndArray();
         jgen.writeEndObject();
     }

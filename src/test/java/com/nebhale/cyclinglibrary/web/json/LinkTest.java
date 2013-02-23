@@ -26,7 +26,7 @@ public class LinkTest {
 
     @Test
     public void test() {
-        Link link = new Link("test-rel", new StubIdentifiable(0), "path-segment", new Stub());
+        Link link = new Link("test-rel", new StubIdentifiable(Long.valueOf(0)), "path-segment", new Stub());
 
         assertEquals("test-rel", link.getRel());
         assertEquals("http://localhost/0/path-segment/non-identifiable", link.getHref());

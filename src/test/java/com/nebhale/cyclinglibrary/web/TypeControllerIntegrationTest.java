@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,8 +50,8 @@ public class TypeControllerIntegrationTest {
 
     @Test
     public void find() throws Exception {
-        Set<Type> types = new HashSet<Type>();
-        types.add(new Type(0, "test-name-1"));
+        Set<Type> types = new HashSet<>();
+        types.add(new Type(Long.valueOf(0), "test-name-1", Long.valueOf(1), Long.valueOf(2)));
         when(this.typeRepository.find()).thenReturn(types);
 
         this.mockMvc.perform(get("/types").accept(MediaType.APPLICATION_JSON)) //
@@ -61,31 +62,37 @@ public class TypeControllerIntegrationTest {
 
     @Test
     public void create() throws Exception {
-        when(this.typeRepository.create("test-name")).thenReturn(new Type(0, "test-name"));
+        when(this.typeRepository.create("test-name")).thenReturn(new Type(Long.valueOf(0), "test-name", Long.valueOf(1), Long.valueOf(2)));
 
         this.mockMvc.perform(
             post("/types").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"test-name\"}").accept(MediaType.APPLICATION_JSON)) //
         .andExpect(status().isCreated()) //
         .andExpect(content().contentType(MediaType.APPLICATION_JSON)) //
         .andExpect(jsonPath("$.name").value("test-name")) //
-        .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0"));
-        ;
+        .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0")) //
+        .andExpect(
+            jsonPath("$.links[?(@.rel== 'collection')].href").value(
+                Arrays.asList("http://localhost/types/0/collections/1", "http://localhost/types/0/collections/2")));
     }
 
     @Test
     public void read() throws Exception {
-        when(this.typeRepository.read(0)).thenReturn(new Type(0, "test-name"));
+        when(this.typeRepository.read(Long.valueOf(0))).thenReturn(new Type(Long.valueOf(0), "test-name", Long.valueOf(1), Long.valueOf(2)));
 
         this.mockMvc.perform(get("/types/{typeId}", 0).accept(MediaType.APPLICATION_JSON)) //
         .andExpect(status().isOk()) //
         .andExpect(content().contentType(MediaType.APPLICATION_JSON)) //
         .andExpect(jsonPath("$.name").value("test-name")) //
-        .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0"));
+        .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0")) //
+        .andExpect(
+            jsonPath("$.links[?(@.rel== 'collection')].href").value(
+                Arrays.asList("http://localhost/types/0/collections/1", "http://localhost/types/0/collections/2")));
     }
 
     @Test
     public void update() throws Exception {
-        when(this.typeRepository.update(0, "new-test-name")).thenReturn(new Type(0, "new-test-name"));
+        when(this.typeRepository.update(Long.valueOf(0), "new-test-name")).thenReturn(
+            new Type(Long.valueOf(0), "new-test-name", Long.valueOf(1), Long.valueOf(2)));
 
         this.mockMvc.perform(
             put("/types/{typeId}", 0).contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"new-test-name\"}").accept(
@@ -93,15 +100,18 @@ public class TypeControllerIntegrationTest {
         .andExpect(status().isOk()) //
         .andExpect(content().contentType(MediaType.APPLICATION_JSON)) //
         .andExpect(jsonPath("$.name").value("new-test-name")) //
-        .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0"));
+        .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0")) //
+        .andExpect(
+            jsonPath("$.links[?(@.rel== 'collection')].href").value(
+                Arrays.asList("http://localhost/types/0/collections/1", "http://localhost/types/0/collections/2")));
     }
 
     @Test
     public void delete() throws Exception {
         this.mockMvc.perform(MockMvcRequestBuilders.delete("/types/{typeId}", 0)) //
         .andExpect(status().isOk());
-        
-        verify(this.typeRepository).delete(0);
+
+        verify(this.typeRepository).delete(Long.valueOf(0));
     }
 
 }
