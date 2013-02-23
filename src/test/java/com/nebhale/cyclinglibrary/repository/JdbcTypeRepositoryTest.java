@@ -53,7 +53,7 @@ public final class JdbcTypeRepositoryTest extends AbstractTransactionalJUnit4Spr
 
         Type type = this.typeRepository.update(0, "new-test-name");
 
-        Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name FROM types WHERE id = 0");
+        Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name FROM types WHERE id = ?", 0);
         assertEquals("new-test-name", data.get("name"));
         assertEquals(data.get("name"), type.getName());
     }

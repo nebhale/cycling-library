@@ -61,7 +61,7 @@ final class JdbcTypeRepository implements TypeRepository {
     @Transactional(readOnly = false)
     public Type update(long typeId, String name) {
         this.jdbcTemplate.update("UPDATE types SET name = ? WHERE id = ?", name, typeId);
-        return new Type(typeId, name);
+        return read(typeId);
     }
 
     @Override
