@@ -11,7 +11,7 @@ public final class Collection extends AbstractIdentifableSupport {
     private final String name;
 
     /**
-     * Creates a new instance specifying the id and name
+     * Creates a new instance specifying the typeId, id, and name
      * 
      * @param typeId The id of the type the collection is related to
      * @param id The id of the collection

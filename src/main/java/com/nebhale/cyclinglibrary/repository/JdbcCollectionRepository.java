@@ -40,7 +40,7 @@ final class JdbcCollectionRepository implements CollectionRepository {
 
         this.jdbcTemplate.update(CREATE_STATEMENT.newPreparedStatementCreator(new Object[] { typeId, name }), keyHolder);
 
-        return new Collection(typeId, keyHolder.getKey().longValue(), name);
+        return read(keyHolder.getKey().longValue());
     }
 
     @Override

@@ -18,7 +18,7 @@ public final class TypeControllerTest {
 
     private final TypeRepository typeRepository = mock(TypeRepository.class);
 
-    private final TypeController controller = new TypeController(typeRepository);
+    private final TypeController controller = new TypeController(this.typeRepository);
 
     @Test
     public void find() {

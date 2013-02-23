@@ -15,7 +15,7 @@ public final class CollectionControllerTest {
 
     private final CollectionRepository collectionRepository = mock(CollectionRepository.class);
 
-    private final CollectionController controller = new CollectionController(collectionRepository);
+    private final CollectionController controller = new CollectionController(this.collectionRepository);
 
     @Test
     public void create() {

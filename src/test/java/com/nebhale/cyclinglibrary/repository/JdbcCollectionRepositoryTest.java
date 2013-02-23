@@ -25,7 +25,7 @@ public final class JdbcCollectionRepositoryTest extends AbstractTransactionalJUn
         Collection collection = this.collectionRepository.create(Long.valueOf(0), "test-name");
 
         Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT id, typeId, name FROM collections");
-        assertEquals(0L, data.get("typeId"));
+        assertEquals(Long.valueOf(0), data.get("typeId"));
         assertEquals("test-name", data.get("name"));
         assertEquals(data.get("id"), collection.getId());
         assertEquals(data.get("typeId"), collection.getTypeId());
