@@ -46,7 +46,7 @@ public class CollectionControllerIntegrationTest {
 
     @Test
     public void create() throws Exception {
-        when(this.collectionRepository.create(0, "test-name")).thenReturn(new Collection(0, 1, "test-name"));
+        when(this.collectionRepository.create(Long.valueOf(0), "test-name")).thenReturn(new Collection(Long.valueOf(0), Long.valueOf(1), "test-name"));
 
         this.mockMvc.perform(
             post("/types/{typeId}/collections", 0).contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"test-name\"}").accept(
@@ -60,7 +60,7 @@ public class CollectionControllerIntegrationTest {
 
     @Test
     public void read() throws Exception {
-        when(this.collectionRepository.read(1)).thenReturn(new Collection(0, 1, "test-name"));
+        when(this.collectionRepository.read(Long.valueOf(1))).thenReturn(new Collection(Long.valueOf(0), Long.valueOf(1), "test-name"));
 
         this.mockMvc.perform(get("/types/{typeId}/collections/{collectionId}", 0, 1).accept(MediaType.APPLICATION_JSON)) //
         .andExpect(status().isOk()) //
@@ -71,7 +71,8 @@ public class CollectionControllerIntegrationTest {
 
     @Test
     public void update() throws Exception {
-        when(this.collectionRepository.update(1, "new-test-name")).thenReturn(new Collection(0, 1, "new-test-name"));
+        when(this.collectionRepository.update(Long.valueOf(1), "new-test-name")).thenReturn(
+            new Collection(Long.valueOf(0), Long.valueOf(1), "new-test-name"));
 
         this.mockMvc.perform(
             put("/types/{typeId}/collections/{collectionId}", 0, 1).contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"new-test-name\"}").accept(
@@ -87,7 +88,7 @@ public class CollectionControllerIntegrationTest {
         this.mockMvc.perform(MockMvcRequestBuilders.delete("/types/{typeId}/collections/{collectionId}", 0, 1)) //
         .andExpect(status().isOk());
 
-        verify(this.collectionRepository).delete(1);
+        verify(this.collectionRepository).delete(Long.valueOf(1));
     }
 
 }

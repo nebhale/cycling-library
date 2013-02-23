@@ -15,7 +15,7 @@ public class CollectionJsonSerializerTest extends AbstractJsonSerializerTest<Col
 
     @Override
     protected Collection getValue() {
-        return new Collection(0, 1, "test-name");
+        return new Collection(Long.valueOf(0), Long.valueOf(1), "test-name");
     }
 
     @Override

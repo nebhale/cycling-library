@@ -1,7 +1,9 @@
 
 package com.nebhale.cyclinglibrary.repository;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.Map;
 import java.util.Set;
@@ -21,8 +23,9 @@ public final class JdbcTypeRepositoryTest extends AbstractTransactionalJUnit4Spr
 
     @Test
     public void find() {
-        this.jdbcTemplate.update("INSERT INTO types(name) VALUES(?)", "test-name-1");
-        this.jdbcTemplate.update("INSERT INTO types(name) VALUES(?)", "test-name-2");
+        this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name-1");
+        this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 1, "test-name-2");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES (?, ?, ?)", 2, 0, "test-name");
 
         Set<Type> types = this.typeRepository.find();
         assertEquals(2, types.size());
@@ -41,28 +44,39 @@ public final class JdbcTypeRepositoryTest extends AbstractTransactionalJUnit4Spr
     @Test
     public void read() {
         this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES (?, ?, ?)", 1, 0, "test-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES (?, ?, ?)", 2, 0, "test-name");
 
-        Type type = this.typeRepository.read(0);
-        assertEquals(0, type.getId());
+        Type type = this.typeRepository.read(Long.valueOf(0));
+        assertEquals(Long.valueOf(0), type.getId());
         assertEquals("test-name", type.getName());
+        assertArrayEquals(new Long[] { Long.valueOf(1), Long.valueOf(2) }, type.getCollectionIds());
+    }
+
+    @Test
+    public void readDoesNotExist() {
+        assertNull(this.typeRepository.read(Long.valueOf(0)));
     }
 
     @Test
     public void update() {
         this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES (?, ?, ?)", 1, 0, "test-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES (?, ?, ?)", 2, 0, "test-name");
 
-        Type type = this.typeRepository.update(0, "new-test-name");
+        Type type = this.typeRepository.update(Long.valueOf(0), "new-test-name");
 
         Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name FROM types WHERE id = ?", 0);
         assertEquals("new-test-name", data.get("name"));
         assertEquals(data.get("name"), type.getName());
+        assertArrayEquals(new Long[] { Long.valueOf(1), Long.valueOf(2) }, type.getCollectionIds());
     }
 
     @Test
     public void delete() {
         this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
 
-        this.typeRepository.delete(0);
+        this.typeRepository.delete(Long.valueOf(0));
 
         assertEquals(0, countRowsInTable("types"));
     }

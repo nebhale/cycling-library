@@ -35,7 +35,7 @@ final class JdbcCollectionRepository implements CollectionRepository {
 
     @Override
     @Transactional(readOnly = false)
-    public Collection create(long typeId, String name) {
+    public Collection create(Long typeId, String name) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         this.jdbcTemplate.update(CREATE_STATEMENT.newPreparedStatementCreator(new Object[] { typeId, name }), keyHolder);
@@ -45,7 +45,7 @@ final class JdbcCollectionRepository implements CollectionRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public Collection read(long collectionId) {
+    public Collection read(Long collectionId) {
         return this.jdbcTemplate.queryForObject(
             "SELECT types.id, collections.id, collections.name FROM types, collections WHERE collections.id = ? AND collections.typeId = types.id",
             new Object[] { collectionId }, ROW_MAPPER);
@@ -53,14 +53,14 @@ final class JdbcCollectionRepository implements CollectionRepository {
 
     @Override
     @Transactional(readOnly = false)
-    public Collection update(long collectionId, String name) {
+    public Collection update(Long collectionId, String name) {
         this.jdbcTemplate.update("UPDATE collections SET name = ? WHERE id = ?", name, collectionId);
         return read(collectionId);
     }
 
     @Override
     @Transactional(readOnly = false)
-    public void delete(long collectionId) {
+    public void delete(Long collectionId) {
         this.jdbcTemplate.update("DELETE FROM collections WHERE id = ?", collectionId);
     }
 

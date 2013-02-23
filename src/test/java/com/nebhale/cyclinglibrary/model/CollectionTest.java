@@ -9,9 +9,9 @@ public class CollectionTest {
 
     @Test
     public void test() {
-        Collection collection = new Collection(0, 1, "test-name");
+        Collection collection = new Collection(Long.valueOf(0), Long.valueOf(1), "test-name");
 
-        assertEquals(0, collection.getTypeId());
+        assertEquals(Long.valueOf(0), collection.getTypeId());
         assertEquals("test-name", collection.getName());
         assertEquals("Collection [typeId=0, name=test-name, getId()=1]", collection.toString());
     }

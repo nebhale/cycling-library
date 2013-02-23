@@ -29,24 +29,24 @@ final class CollectionController {
     @RequestMapping(method = RequestMethod.POST, value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    Collection create(@PathVariable long typeId, @RequestBody CollectionInput collectionInput) {
+    Collection create(@PathVariable Long typeId, @RequestBody CollectionInput collectionInput) {
         return this.collectionRepository.create(typeId, collectionInput.getName());
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{collectionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    Collection read(@PathVariable long collectionId) {
+    Collection read(@PathVariable Long collectionId) {
         return this.collectionRepository.read(collectionId);
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{collectionId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    Collection update(@PathVariable long collectionId, @RequestBody CollectionInput collectionInput) {
+    Collection update(@PathVariable Long collectionId, @RequestBody CollectionInput collectionInput) {
         return this.collectionRepository.update(collectionId, collectionInput.getName());
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{collectionId}")
-    void delete(@PathVariable long collectionId) {
+    void delete(@PathVariable Long collectionId) {
         this.collectionRepository.delete(collectionId);
     }
 

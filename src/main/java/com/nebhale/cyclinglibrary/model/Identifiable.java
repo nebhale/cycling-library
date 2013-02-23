@@ -11,5 +11,5 @@ public interface Identifiable {
      * 
      * @return the id of the type
      */
-    long getId();
+    Long getId();
 }

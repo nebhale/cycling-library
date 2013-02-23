@@ -15,7 +15,7 @@ public interface CollectionRepository {
      * @param name The name of the collection
      * @return The created collection
      */
-    Collection create(long typeId, String name);
+    Collection create(Long typeId, String name);
 
     /**
      * Read a collection identified by its id
@@ -23,7 +23,7 @@ public interface CollectionRepository {
      * @param collectionId The id of the collection to read
      * @return The collection
      */
-    Collection read(long collectionId);
+    Collection read(Long collectionId);
 
     /**
      * Update a collection identified by its id
@@ -32,12 +32,12 @@ public interface CollectionRepository {
      * @param name The new name of the collection
      * @return The updated collection
      */
-    Collection update(long collectionId, String name);
+    Collection update(Long collectionId, String name);
 
     /**
      * Delete a collection identified by its id
      * 
      * @param collectionId The id of the collection to delete
      */
-    void delete(long collectionId);
+    void delete(Long collectionId);
 }

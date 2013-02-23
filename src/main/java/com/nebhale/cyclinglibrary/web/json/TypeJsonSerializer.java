@@ -21,11 +21,12 @@ final class TypeJsonSerializer extends StdSerializer<Type> {
     public void serialize(Type value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
         jgen.writeStartObject();
         jgen.writeStringField("name", value.getName());
-
         jgen.writeArrayFieldStart("links");
         jgen.writeObject(new Link("self", "types", value));
+        for (Long collectiondId : value.getCollectionIds()) {
+            jgen.writeObject(new Link("collection", "types", value, "collections", collectiondId));
+        }
         jgen.writeEndArray();
-
         jgen.writeEndObject();
     }
 

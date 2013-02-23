@@ -6,8 +6,8 @@ package com.nebhale.cyclinglibrary.model;
  */
 public final class Collection extends AbstractIdentifableSupport {
 
-    private final long typeId;
-    
+    private final Long typeId;
+
     private final String name;
 
     /**
@@ -17,19 +17,19 @@ public final class Collection extends AbstractIdentifableSupport {
      * @param id The id of the collection
      * @param name The name of the collection
      */
-    public Collection(long typeId, long id, String name) {
+    public Collection(Long typeId, Long id, String name) {
         super(id);
         this.typeId = typeId;
         this.name = name;
     }
-    
+
     /**
      * Returns the id of the type the collection is related to
      * 
      * @return the id of the type the collection is related to
      */
-    public long getTypeId() {
-        return typeId;
+    public Long getTypeId() {
+        return this.typeId;
     }
 
     /**
@@ -38,7 +38,7 @@ public final class Collection extends AbstractIdentifableSupport {
      * @return the name of the collection
      */
     public String getName() {
-        return name;
+        return this.name;
     }
 
     @Override

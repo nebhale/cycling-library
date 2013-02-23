@@ -31,7 +31,7 @@ public interface TypeRepository {
      * @param typeId The id of the type to read
      * @return The type
      */
-    Type read(long typeId);
+    Type read(Long typeId);
 
     /**
      * Update a type identified by its id
@@ -40,12 +40,12 @@ public interface TypeRepository {
      * @param name The new name of the type
      * @return The updated type
      */
-    Type update(long typeId, String name);
+    Type update(Long typeId, String name);
 
     /**
      * Delete a type identified by its id
      * 
      * @param typeId The id of the type to delete
      */
-    void delete(long typeId);
+    void delete(Long typeId);
 }

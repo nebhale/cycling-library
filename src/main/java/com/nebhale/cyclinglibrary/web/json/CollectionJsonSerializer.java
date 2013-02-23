@@ -21,11 +21,9 @@ final class CollectionJsonSerializer extends StdSerializer<Collection> {
     public void serialize(Collection value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
         jgen.writeStartObject();
         jgen.writeStringField("name", value.getName());
-
         jgen.writeArrayFieldStart("links");
         jgen.writeObject(new Link("self", "types", value.getTypeId(), "collections", value));
         jgen.writeEndArray();
-
         jgen.writeEndObject();
     }
 

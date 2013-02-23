@@ -22,7 +22,7 @@ public final class JdbcCollectionRepositoryTest extends AbstractTransactionalJUn
     public void create() {
         this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
 
-        Collection collection = this.collectionRepository.create(0, "test-name");
+        Collection collection = this.collectionRepository.create(Long.valueOf(0), "test-name");
 
         Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT id, typeId, name FROM collections");
         assertEquals(0L, data.get("typeId"));
@@ -36,10 +36,10 @@ public final class JdbcCollectionRepositoryTest extends AbstractTransactionalJUn
     public void read() {
         this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
         this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES(?, ?, ?)", 1, 0, "test-name");
-        
-        Collection collection = this.collectionRepository.read(1);
-        assertEquals(1, collection.getId());
-        assertEquals(0, collection.getTypeId());
+
+        Collection collection = this.collectionRepository.read(Long.valueOf(1));
+        assertEquals(Long.valueOf(1), collection.getId());
+        assertEquals(Long.valueOf(0), collection.getTypeId());
         assertEquals("test-name", collection.getName());
     }
 
@@ -48,7 +48,7 @@ public final class JdbcCollectionRepositoryTest extends AbstractTransactionalJUn
         this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
         this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES(?, ?, ?)", 1, 0, "test-name");
 
-        Collection collection = this.collectionRepository.update(1, "new-test-name");
+        Collection collection = this.collectionRepository.update(Long.valueOf(1), "new-test-name");
 
         Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name FROM collections WHERE id = ?", 1);
         assertEquals("new-test-name", data.get("name"));
@@ -60,7 +60,7 @@ public final class JdbcCollectionRepositoryTest extends AbstractTransactionalJUn
         this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
         this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES(?, ?, ?)", 1, 0, "test-name");
 
-        this.collectionRepository.delete(1);
+        this.collectionRepository.delete(Long.valueOf(1));
 
         assertEquals(0, countRowsInTable("collections"));
     }

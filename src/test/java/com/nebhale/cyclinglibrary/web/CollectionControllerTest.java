@@ -19,39 +19,39 @@ public final class CollectionControllerTest {
 
     @Test
     public void create() {
-        Collection collection = new Collection(0, 1, "test-name");
-        when(this.collectionRepository.create(0, "test-name")).thenReturn(collection);
+        Collection collection = new Collection(Long.valueOf(0), Long.valueOf(1), "test-name");
+        when(this.collectionRepository.create(Long.valueOf(0), "test-name")).thenReturn(collection);
 
-        Collection result = this.controller.create(0, new CollectionInput("test-name"));
+        Collection result = this.controller.create(Long.valueOf(0), new CollectionInput("test-name"));
 
         assertSame(collection, result);
     }
 
     @Test
     public void read() {
-        Collection collection = new Collection(0, 1, "test-name");
-        when(this.collectionRepository.read(1)).thenReturn(collection);
+        Collection collection = new Collection(Long.valueOf(0), Long.valueOf(1), "test-name");
+        when(this.collectionRepository.read(Long.valueOf(1))).thenReturn(collection);
 
-        Collection result = this.controller.read(1);
+        Collection result = this.controller.read(Long.valueOf(1));
 
         assertSame(collection, result);
     }
 
     @Test
     public void update() {
-        Collection collection = new Collection(0, 1, "new-test-name");
-        when(this.collectionRepository.update(1, "new-test-name")).thenReturn(collection);
+        Collection collection = new Collection(Long.valueOf(0), Long.valueOf(1), "new-test-name");
+        when(this.collectionRepository.update(Long.valueOf(1), "new-test-name")).thenReturn(collection);
 
-        Collection result = this.controller.update(1, new CollectionInput("new-test-name"));
+        Collection result = this.controller.update(Long.valueOf(1), new CollectionInput("new-test-name"));
 
         assertSame(collection, result);
     }
 
     @Test
     public void delete() {
-        this.controller.delete(1);
+        this.controller.delete(Long.valueOf(1));
 
-        verify(this.collectionRepository).delete(1);
+        verify(this.collectionRepository).delete(Long.valueOf(1));
     }
 
 }
