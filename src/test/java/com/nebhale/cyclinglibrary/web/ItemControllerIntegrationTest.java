@@ -56,7 +56,6 @@ public class ItemControllerIntegrationTest {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON)) //
         .andExpect(jsonPath("$.name").value("test-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1/items/2"));
-        ;
     }
 
     @Test

@@ -10,6 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,7 +48,8 @@ public class CollectionControllerIntegrationTest {
 
     @Test
     public void create() throws Exception {
-        when(this.collectionRepository.create(Long.valueOf(0), "test-name")).thenReturn(new Collection(Long.valueOf(0), Long.valueOf(1), "test-name"));
+        when(this.collectionRepository.create(Long.valueOf(0), "test-name")).thenReturn(
+            new Collection(Long.valueOf(0), Long.valueOf(1), "test-name", Long.valueOf(2), Long.valueOf(3)));
 
         this.mockMvc.perform(
             post("/types/{typeId}/collections", 0).contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"test-name\"}").accept(
@@ -54,25 +57,31 @@ public class CollectionControllerIntegrationTest {
         .andExpect(status().isCreated()) //
         .andExpect(content().contentType(MediaType.APPLICATION_JSON)) //
         .andExpect(jsonPath("$.name").value("test-name")) //
-        .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1"));
-        ;
+        .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1")) //
+        .andExpect(
+            jsonPath("$.links[?(@.rel== 'item')].href").value(
+                Arrays.asList("http://localhost/types/0/collections/1/items/2", "http://localhost/types/0/collections/1/items/3")));
     }
 
     @Test
     public void read() throws Exception {
-        when(this.collectionRepository.read(Long.valueOf(1))).thenReturn(new Collection(Long.valueOf(0), Long.valueOf(1), "test-name"));
+        when(this.collectionRepository.read(Long.valueOf(1))).thenReturn(
+            new Collection(Long.valueOf(0), Long.valueOf(1), "test-name", Long.valueOf(2), Long.valueOf(3)));
 
         this.mockMvc.perform(get("/types/{typeId}/collections/{collectionId}", 0, 1).accept(MediaType.APPLICATION_JSON)) //
         .andExpect(status().isOk()) //
         .andExpect(content().contentType(MediaType.APPLICATION_JSON)) //
         .andExpect(jsonPath("$.name").value("test-name")) //
-        .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1"));
+        .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1")) //
+        .andExpect(
+            jsonPath("$.links[?(@.rel== 'item')].href").value(
+                Arrays.asList("http://localhost/types/0/collections/1/items/2", "http://localhost/types/0/collections/1/items/3")));
     }
 
     @Test
     public void update() throws Exception {
         when(this.collectionRepository.update(Long.valueOf(1), "new-test-name")).thenReturn(
-            new Collection(Long.valueOf(0), Long.valueOf(1), "new-test-name"));
+            new Collection(Long.valueOf(0), Long.valueOf(1), "new-test-name", Long.valueOf(2), Long.valueOf(3)));
 
         this.mockMvc.perform(
             put("/types/{typeId}/collections/{collectionId}", 0, 1).contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"new-test-name\"}").accept(
@@ -80,7 +89,10 @@ public class CollectionControllerIntegrationTest {
         .andExpect(status().isOk()) //
         .andExpect(content().contentType(MediaType.APPLICATION_JSON)) //
         .andExpect(jsonPath("$.name").value("new-test-name")) //
-        .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1"));
+        .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1")) //
+        .andExpect(
+            jsonPath("$.links[?(@.rel== 'item')].href").value(
+                Arrays.asList("http://localhost/types/0/collections/1/items/2", "http://localhost/types/0/collections/1/items/3")));
     }
 
     @Test

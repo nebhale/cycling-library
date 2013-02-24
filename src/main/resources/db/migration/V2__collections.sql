@@ -3,5 +3,5 @@ CREATE TABLE collections(
 	typeId BIGINT,
 	name VARCHAR(255),
 	
-	FOREIGN KEY(typeId) REFERENCES types(id)
+	FOREIGN KEY(typeId) REFERENCES types(id) ON DELETE CASCADE
 );
