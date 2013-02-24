@@ -1,5 +1,5 @@
 CREATE TABLE collections(
-	id IDENTITY PRIMARY KEY,
+	id SERIAL PRIMARY KEY,
 	typeId BIGINT,
 	name VARCHAR(255),
 	

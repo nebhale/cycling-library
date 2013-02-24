@@ -52,14 +52,14 @@ final class JdbcTypeRepository implements TypeRepository {
 
         this.jdbcTemplate.update(CREATE_STATEMENT.newPreparedStatementCreator(new Object[] { name }), keyHolder);
 
-        return new Type(keyHolder.getKey().longValue(), name);
+        return read(keyHolder.getKey().longValue());
     }
 
     @Override
     @Transactional(readOnly = true)
     public Type read(Long typeId) {
         return this.jdbcTemplate.query(
-            "SELECT types.id, types.name, collections.id FROM types, collections WHERE types.id = ? AND types.id = collections.typeId",
+            "SELECT types.id, types.name, collections.id FROM types LEFT OUTER JOIN collections ON types.id = collections.typeId WHERE types.id = ?",
             new Object[] { typeId }, TYPE_EXTRACTOR);
     }
 

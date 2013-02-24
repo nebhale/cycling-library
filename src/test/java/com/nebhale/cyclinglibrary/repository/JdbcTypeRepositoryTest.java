@@ -75,9 +75,12 @@ public final class JdbcTypeRepositoryTest extends AbstractTransactionalJUnit4Spr
     @Test
     public void delete() {
         this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES (?, ?, ?)", 1, 0, "test-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES (?, ?, ?)", 2, 0, "test-name");
 
         this.typeRepository.delete(Long.valueOf(0));
 
         assertEquals(0, countRowsInTable("types"));
+        assertEquals(0, countRowsInTable("collections"));
     }
 }
