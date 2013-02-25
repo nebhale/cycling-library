@@ -1,0 +1,5 @@
+CREATE TABLE tasks(
+	id IDENTITY PRIMARY KEY,
+	status VARCHAR(16),
+	message VARCHAR(128)
+);

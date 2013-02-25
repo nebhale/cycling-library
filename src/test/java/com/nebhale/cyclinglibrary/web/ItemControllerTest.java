@@ -2,29 +2,45 @@
 package com.nebhale.cyclinglibrary.web;
 
 import static org.junit.Assert.assertSame;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import com.nebhale.cyclinglibrary.model.Item;
+import com.nebhale.cyclinglibrary.model.Point;
+import com.nebhale.cyclinglibrary.model.Status;
+import com.nebhale.cyclinglibrary.model.Task;
 import com.nebhale.cyclinglibrary.repository.ItemRepository;
+import com.nebhale.cyclinglibrary.util.PointParser;
+import com.nebhale.cyclinglibrary.util.PointParserCallback;
 
 public final class ItemControllerTest {
 
     private final ItemRepository itemRepository = mock(ItemRepository.class);
 
-    private final ItemController controller = new ItemController(this.itemRepository);
+    private final PointParser pointParser = mock(PointParser.class);
+
+    private final ItemController controller = new ItemController(this.itemRepository, this.pointParser);
 
     @Test
     public void create() {
-        Item item = new Item(Long.valueOf(0), Long.valueOf(1), Long.valueOf(2), "test-name");
-        when(this.itemRepository.create(Long.valueOf(1), "test-name")).thenReturn(item);
+        Task task = new Task(Long.valueOf(4), Status.IN_PROGRESS, "test-message");
+        ArgumentCaptor<PointParserCallback> callback = ArgumentCaptor.forClass(PointParserCallback.class);
+        when(this.pointParser.parse(eq("test-points"), callback.capture())).thenReturn(task);
+        List<Point> points = Arrays.asList();
 
-        Item result = this.controller.create(Long.valueOf(1), new ItemInput("test-name"));
+        Task result = this.controller.create(Long.valueOf(1), new ItemInput("test-name", "test-points"));
+        callback.getValue().finished(points);
 
-        assertSame(item, result);
+        assertSame(task, result);
+        verify(this.itemRepository).create(Long.valueOf(1), "test-name", points);
     }
 
     @Test
@@ -39,12 +55,16 @@ public final class ItemControllerTest {
 
     @Test
     public void update() {
-        Item item = new Item(Long.valueOf(0), Long.valueOf(1), Long.valueOf(2), "new-test-name");
-        when(this.itemRepository.update(Long.valueOf(2), "new-test-name")).thenReturn(item);
+        Task task = new Task(Long.valueOf(4), Status.IN_PROGRESS, "test-message");
+        ArgumentCaptor<PointParserCallback> callback = ArgumentCaptor.forClass(PointParserCallback.class);
+        when(this.pointParser.parse(eq("new-test-points"), callback.capture())).thenReturn(task);
+        List<Point> points = Arrays.asList();
 
-        Item result = this.controller.update(Long.valueOf(2), new ItemInput("new-test-name"));
+        Task result = this.controller.update(Long.valueOf(2), new ItemInput("new-test-name", "new-test-points"));
+        callback.getValue().finished(points);
 
-        assertSame(item, result);
+        assertSame(task, result);
+        verify(this.itemRepository).update(Long.valueOf(2), "new-test-name", points);
     }
 
     @Test

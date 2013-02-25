@@ -1,8 +1,11 @@
 
 package com.nebhale.cyclinglibrary.model;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
- * Represents a collection in a type
+ * Represents an item in a collection
  */
 public final class Item extends AbstractIdentifableSupport {
 
@@ -12,19 +15,36 @@ public final class Item extends AbstractIdentifableSupport {
 
     private final String name;
 
+    private final List<Point> points;
+
     /**
-     * Creates a new instance specifying the typeId, collectionId, id and name
+     * Creates a new instance specifying the typeId, collectionId, id, name, and points
      * 
      * @param typeId The id of the type the item is related to
      * @param collectionId The id of the collection the item is related to
      * @param id The id of the item
      * @param name The name of the item
+     * @param points The points of the item
      */
-    public Item(Long typeId, Long collectionId, Long id, String name) {
+    public Item(Long typeId, Long collectionId, Long id, String name, Point... points) {
+        this(typeId, collectionId, id, name, Arrays.asList(points));
+    }
+
+    /**
+     * Creates a new instance specifying the typeId, collectionId, id, name, and points
+     * 
+     * @param typeId The id of the type the item is related to
+     * @param collectionId The id of the collection the item is related to
+     * @param id The id of the item
+     * @param name The name of the item
+     * @param points The points of the item
+     */
+    public Item(Long typeId, Long collectionId, Long id, String name, List<Point> points) {
         super(id);
         this.typeId = typeId;
         this.collectionId = collectionId;
         this.name = name;
+        this.points = points;
     }
 
     /**
@@ -54,9 +74,18 @@ public final class Item extends AbstractIdentifableSupport {
         return this.name;
     }
 
+    /**
+     * Returns the points of the item
+     * 
+     * @return the points of the item
+     */
+    public List<Point> getPoints() {
+        return points;
+    }
+
     @Override
     public String toString() {
-        return "Item [typeId=" + typeId + ", collectionId=" + collectionId + ", name=" + name + ", getId()=" + getId() + "]";
+        return "Item [typeId=" + typeId + ", collectionId=" + collectionId + ", name=" + name + ", points=" + points + ", getId()=" + getId() + "]";
     }
 
 }

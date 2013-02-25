@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="bikehike.co.uk" version="1.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+
+  <metadata>
+    <time>2013-02-26T17:16:20Z</time>
+    <bounds minlat="50.855030" minlon="-1.526620" maxlat="50.861480" maxlon="-1.503780" />
+  </metadata>
+
+
+
+  <rte>
+    <name>test</name>
+    <number>1</number>
+    <rtept lat="50.855030" lon="-1.503780">
+      <ele>26.56</ele>
+      <time>2013-02-26T17:16:20Z</time>
+      <name>pt0</name>
+    </rtept>
+    <rtept lat="50.857760" lon="-1.510630">
+      <ele>29.8</ele>
+      <time>2013-02-26T17:17:41Z</time>
+      <name>pt1</name>
+    </rtept>
+    <rtept lat="50.858240" lon="-1.512010">
+      <ele>27.06</ele>
+      <time>2013-02-26T17:17:57Z</time>
+      <name>pt2</name>
+    </rtept>
+  </rte>
+</gpx>

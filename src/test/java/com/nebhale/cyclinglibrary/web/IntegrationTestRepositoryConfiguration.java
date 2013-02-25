@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Configuration;
 
 import com.nebhale.cyclinglibrary.repository.CollectionRepository;
 import com.nebhale.cyclinglibrary.repository.ItemRepository;
+import com.nebhale.cyclinglibrary.repository.TaskRepository;
 import com.nebhale.cyclinglibrary.repository.TypeRepository;
+import com.nebhale.cyclinglibrary.util.PointParser;
 
 @Configuration
 class IntegrationTestRepositoryConfiguration {
@@ -26,6 +28,16 @@ class IntegrationTestRepositoryConfiguration {
     @Bean
     ItemRepository itemRepository() {
         return mock(ItemRepository.class);
+    }
+
+    @Bean
+    TaskRepository taskRepository() {
+        return mock(TaskRepository.class);
+    }
+
+    @Bean
+    PointParser pointParser() {
+        return mock(PointParser.class);
     }
 
 }

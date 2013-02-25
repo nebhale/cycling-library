@@ -1,4 +1,4 @@
 CREATE TABLE types(
 	id IDENTITY PRIMARY KEY,
-	name VARCHAR(255)
+	name VARCHAR(64)
 );

@@ -1,7 +1,7 @@
 CREATE TABLE collections(
 	id SERIAL PRIMARY KEY,
 	typeId BIGINT,
-	name VARCHAR(255),
+	name VARCHAR(64),
 	
 	FOREIGN KEY(typeId) REFERENCES types(id) ON DELETE CASCADE
 );

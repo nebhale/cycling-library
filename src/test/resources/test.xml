@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<TrainingCenterDatabase xmlns="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2 http://www.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd">
+  <Courses>
+    <Course>
+      <Name>test</Name>
+      <Lap>
+        <TotalTimeSeconds>256.42953271104</TotalTimeSeconds>
+        <DistanceMeters>1780.7606438267</DistanceMeters>
+        <BeginPosition>
+          <LatitudeDegrees>50.855030</LatitudeDegrees>
+          <LongitudeDegrees>-1.503780</LongitudeDegrees>
+        </BeginPosition>
+        <EndPosition>
+          <LatitudeDegrees>50.861310</LatitudeDegrees>
+          <LongitudeDegrees>-1.526620</LongitudeDegrees>
+        </EndPosition>
+        <Intensity>Active</Intensity>
+      </Lap>
+    </Course>
+  </Courses>
+</TrainingCenterDatabase>

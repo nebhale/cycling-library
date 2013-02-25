@@ -3,7 +3,6 @@ package com.nebhale.cyclinglibrary.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,20 +25,20 @@ final class CollectionController {
         this.collectionRepository = collectionRepository;
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, value = "", consumes = ApplicationMediaType.COLLECTION_VALUE, produces = ApplicationMediaType.COLLECTION_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     Collection create(@PathVariable Long typeId, @RequestBody CollectionInput collectionInput) {
         return this.collectionRepository.create(typeId, collectionInput.getName());
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{collectionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, value = "/{collectionId}", produces = ApplicationMediaType.COLLECTION_VALUE)
     @ResponseBody
     Collection read(@PathVariable Long collectionId) {
         return this.collectionRepository.read(collectionId);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, value = "/{collectionId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.PUT, value = "/{collectionId}", consumes = ApplicationMediaType.COLLECTION_VALUE, produces = ApplicationMediaType.COLLECTION_VALUE)
     @ResponseBody
     Collection update(@PathVariable Long collectionId, @RequestBody CollectionInput collectionInput) {
         return this.collectionRepository.update(collectionId, collectionInput.getName());

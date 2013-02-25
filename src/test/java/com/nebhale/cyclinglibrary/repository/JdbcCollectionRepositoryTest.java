@@ -1,7 +1,6 @@
 
 package com.nebhale.cyclinglibrary.repository;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -9,13 +8,11 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 import com.nebhale.cyclinglibrary.model.Collection;
+import com.nebhale.cyclinglibrary.util.Sets;
 
-@ContextConfiguration(classes = { RepositoryConfiguration.class, TestRepositoryConfiguration.class })
-public final class JdbcCollectionRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests {
+public final class JdbcCollectionRepositoryTest extends AbstractJdbcRepositoryTest {
 
     @Autowired
     private volatile JdbcCollectionRepository collectionRepository;
@@ -45,7 +42,7 @@ public final class JdbcCollectionRepositoryTest extends AbstractTransactionalJUn
         assertEquals(Long.valueOf(1), collection.getId());
         assertEquals(Long.valueOf(0), collection.getTypeId());
         assertEquals("test-name", collection.getName());
-        assertArrayEquals(new Long[] { Long.valueOf(2), Long.valueOf(3) }, collection.getItemIds());
+        assertEquals(Sets.asSet(Long.valueOf(2), Long.valueOf(3)), collection.getItemIds());
     }
 
     @Test
@@ -65,7 +62,7 @@ public final class JdbcCollectionRepositoryTest extends AbstractTransactionalJUn
         Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name FROM collections WHERE id = ?", 1);
         assertEquals("new-test-name", data.get("name"));
         assertEquals(data.get("name"), collection.getName());
-        assertArrayEquals(new Long[] { Long.valueOf(2), Long.valueOf(3) }, collection.getItemIds());
+        assertEquals(Sets.asSet(Long.valueOf(2), Long.valueOf(3)), collection.getItemIds());
     }
 
     @Test

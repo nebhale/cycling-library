@@ -104,7 +104,7 @@ final class JdbcCollectionRepository implements CollectionRepository {
         private final Set<Long> itemIds = new HashSet<>();
 
         private Collection create() {
-            return new Collection(typeId, id, name, itemIds.toArray(new Long[itemIds.size()]));
+            return new Collection(typeId, id, name, itemIds);
         }
     }
 

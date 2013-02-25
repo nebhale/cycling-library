@@ -1,7 +1,9 @@
 
 package com.nebhale.cyclinglibrary.model;
 
-import java.util.Arrays;
+import java.util.Set;
+
+import com.nebhale.cyclinglibrary.util.Sets;
 
 /**
  * Represents a collection in a type
@@ -12,7 +14,7 @@ public final class Collection extends AbstractIdentifableSupport {
 
     private final String name;
 
-    private final Long[] itemIds;
+    private final Set<Long> itemIds;
 
     /**
      * Creates a new instance specifying the typeId, id, and name
@@ -23,6 +25,18 @@ public final class Collection extends AbstractIdentifableSupport {
      * @param itemIds The ids of the items related to this collection
      */
     public Collection(Long typeId, Long id, String name, Long... itemIds) {
+        this(typeId, id, name, Sets.asSet(itemIds));
+    }
+
+    /**
+     * Creates a new instance specifying the typeId, id, name, and item ids
+     * 
+     * @param typeId The id of the type the collection is related to
+     * @param id The id of the collection
+     * @param name The name of the collection
+     * @param itemIds The ids of the items related to this collection
+     */
+    public Collection(Long typeId, Long id, String name, Set<Long> itemIds) {
         super(id);
         this.typeId = typeId;
         this.name = name;
@@ -52,13 +66,13 @@ public final class Collection extends AbstractIdentifableSupport {
      * 
      * @return the ids of the items related to this collection
      */
-    public Long[] getItemIds() {
+    public Set<Long> getItemIds() {
         return itemIds;
     }
 
     @Override
     public String toString() {
-        return "Collection [typeId=" + typeId + ", name=" + name + ", itemIds=" + Arrays.toString(itemIds) + ", getId()=" + getId() + "]";
+        return "Collection [typeId=" + typeId + ", name=" + name + ", itemIds=" + itemIds + ", getId()=" + getId() + "]";
     }
 
 }

@@ -132,7 +132,7 @@ final class JdbcTypeRepository implements TypeRepository {
         private final Set<Long> collectionIds = new HashSet<>();
 
         private Type create() {
-            return new Type(id, name, collectionIds.toArray(new Long[collectionIds.size()]));
+            return new Type(id, name, collectionIds);
         }
     }
 
