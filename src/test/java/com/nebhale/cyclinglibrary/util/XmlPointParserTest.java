@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.nebhale.cyclinglibrary.util;
 
@@ -37,7 +52,7 @@ public class XmlPointParserTest {
 
     @Before
     public void setupCaptor() {
-        when(pointAugmenter.augmentPoints(pointsArgumentCaptor.capture(), callbackArgumentCaptor.capture())).thenReturn(this.task);
+        when(this.pointAugmenter.augmentPoints(this.pointsArgumentCaptor.capture(), this.callbackArgumentCaptor.capture())).thenReturn(this.task);
     }
 
     @Test
@@ -64,12 +79,12 @@ public class XmlPointParserTest {
         String content = loadFile(filename);
         Task result = this.pointParser.parse(content, this.callback);
 
-        assertEquals(task, result);
+        assertEquals(this.task, result);
 
         this.callbackArgumentCaptor.getValue().finished(null);
         assertTrue(this.callback.called);
 
-        Double[][] points = pointsArgumentCaptor.getValue();
+        Double[][] points = this.pointsArgumentCaptor.getValue();
         assertEquals(Double.valueOf(50.855030), points[0][0]);
         assertEquals(Double.valueOf(-1.503780), points[0][1]);
         assertEquals(Double.valueOf(50.857760), points[1][0]);

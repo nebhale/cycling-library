@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.nebhale.cyclinglibrary.util;
 
@@ -54,8 +69,8 @@ final class GoogleMapsPointAugmenter implements PointAugmenter {
         List<String> encodedPolylines = this.polylineEncoder.encode(MAX_URL_LENGTH - ELEVATION_URL.length(), points);
         Task task = this.taskRepository.create("Augmenting %d segments", encodedPolylines.size());
 
-        scheduledExecutorService.execute(new PointsAugmentingRunnable(this.restTemplate, this.scheduledExecutorService, this.taskRepository, task,
-            encodedPolylines, callback));
+        this.scheduledExecutorService.execute(new PointsAugmentingRunnable(this.restTemplate, this.scheduledExecutorService, this.taskRepository,
+            task, encodedPolylines, callback));
 
         return task;
     }
@@ -94,7 +109,7 @@ final class GoogleMapsPointAugmenter implements PointAugmenter {
             try {
                 for (int i = 0; i < futures.size(); i++) {
                     points.addAll(futures.get(i).get());
-                    this.taskRepository.update(task.getId(), Status.IN_PROGRESS, "Augmenting %d%% complete", i / futures.size());
+                    this.taskRepository.update(this.task.getId(), Status.IN_PROGRESS, "Augmenting %d%% complete", i / futures.size());
                 }
 
                 this.taskRepository.update(this.task.getId(), Status.SUCCESS, "Augmenting 100% complete");
@@ -106,10 +121,10 @@ final class GoogleMapsPointAugmenter implements PointAugmenter {
         }
 
         private List<Future<List<Point>>> startAugments() {
-            List<Future<List<Point>>> futures = new ArrayList<>(encodedPolylines.size());
+            List<Future<List<Point>>> futures = new ArrayList<>(this.encodedPolylines.size());
 
             for (int i = 0; i < this.encodedPolylines.size(); i++) {
-                PointAugmentingCallable callable = new PointAugmentingCallable(this.restTemplate, ELEVATION_URL + encodedPolylines.get(i));
+                PointAugmentingCallable callable = new PointAugmentingCallable(this.restTemplate, ELEVATION_URL + this.encodedPolylines.get(i));
                 long delay = i * DELAY_INCREMENT;
 
                 ScheduledFuture<List<Point>> future = this.scheduledExecutorService.schedule(callable, delay, TimeUnit.MILLISECONDS);

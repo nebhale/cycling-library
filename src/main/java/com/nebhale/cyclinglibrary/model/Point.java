@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.nebhale.cyclinglibrary.model;
 
@@ -65,7 +80,7 @@ public final class Point extends AbstractIdentifableSupport implements Comparabl
      * @return the id of the collection the point is related to
      */
     public Long getCollectionId() {
-        return collectionId;
+        return this.collectionId;
     }
 
     /**
@@ -74,7 +89,7 @@ public final class Point extends AbstractIdentifableSupport implements Comparabl
      * @return the id of the item the point is related to
      */
     public Long getItemId() {
-        return itemId;
+        return this.itemId;
     }
 
     /**
@@ -83,7 +98,7 @@ public final class Point extends AbstractIdentifableSupport implements Comparabl
      * @return the latitude of the point
      */
     public Double getLatitude() {
-        return latitude;
+        return this.latitude;
     }
 
     /**
@@ -92,7 +107,7 @@ public final class Point extends AbstractIdentifableSupport implements Comparabl
      * @return the longitude of the point
      */
     public Double getLongitude() {
-        return longitude;
+        return this.longitude;
     }
 
     /**
@@ -101,7 +116,7 @@ public final class Point extends AbstractIdentifableSupport implements Comparabl
      * @return the elevation of the point
      */
     public Double getElevation() {
-        return elevation;
+        return this.elevation;
     }
 
     @Override
@@ -111,8 +126,8 @@ public final class Point extends AbstractIdentifableSupport implements Comparabl
 
     @Override
     public String toString() {
-        return "Point [typeId=" + typeId + ", collectionId=" + collectionId + ", itemId=" + itemId + ", latitude=" + latitude + ", longitude="
-            + longitude + ", elevation=" + elevation + ", getId()=" + getId() + "]";
+        return "Point [typeId=" + this.typeId + ", collectionId=" + this.collectionId + ", itemId=" + this.itemId + ", latitude=" + this.latitude
+            + ", longitude=" + this.longitude + ", elevation=" + this.elevation + ", getId()=" + getId() + "]";
     }
 
 }
