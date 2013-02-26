@@ -1,7 +1,21 @@
+/*
+ * Copyright 2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.nebhale.cyclinglibrary.repository;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -9,13 +23,11 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
 import com.nebhale.cyclinglibrary.model.Collection;
+import com.nebhale.cyclinglibrary.util.Sets;
 
-@ContextConfiguration(classes = { RepositoryConfiguration.class, TestRepositoryConfiguration.class })
-public final class JdbcCollectionRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests {
+public final class JdbcCollectionRepositoryTest extends AbstractJdbcRepositoryTest {
 
     @Autowired
     private volatile JdbcCollectionRepository collectionRepository;
@@ -45,7 +57,7 @@ public final class JdbcCollectionRepositoryTest extends AbstractTransactionalJUn
         assertEquals(Long.valueOf(1), collection.getId());
         assertEquals(Long.valueOf(0), collection.getTypeId());
         assertEquals("test-name", collection.getName());
-        assertArrayEquals(new Long[] { Long.valueOf(2), Long.valueOf(3) }, collection.getItemIds());
+        assertEquals(Sets.asSet(Long.valueOf(2), Long.valueOf(3)), collection.getItemIds());
     }
 
     @Test
@@ -65,7 +77,7 @@ public final class JdbcCollectionRepositoryTest extends AbstractTransactionalJUn
         Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name FROM collections WHERE id = ?", 1);
         assertEquals("new-test-name", data.get("name"));
         assertEquals(data.get("name"), collection.getName());
-        assertArrayEquals(new Long[] { Long.valueOf(2), Long.valueOf(3) }, collection.getItemIds());
+        assertEquals(Sets.asSet(Long.valueOf(2), Long.valueOf(3)), collection.getItemIds());
     }
 
     @Test

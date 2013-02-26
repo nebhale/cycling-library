@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.nebhale.cyclinglibrary.web;
 
@@ -18,7 +33,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -54,9 +68,9 @@ public class TypeControllerIntegrationTest {
         types.add(new Type(Long.valueOf(0), "test-name-1", Long.valueOf(1), Long.valueOf(2)));
         when(this.typeRepository.find()).thenReturn(types);
 
-        this.mockMvc.perform(get("/types").accept(MediaType.APPLICATION_JSON)) //
+        this.mockMvc.perform(get("/types").accept(ApplicationMediaType.TYPE)) //
         .andExpect(status().isOk()) //
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON)) //
+        .andExpect(content().contentType(ApplicationMediaType.TYPE)) //
         .andExpect(jsonPath("$").isArray());
     }
 
@@ -65,9 +79,9 @@ public class TypeControllerIntegrationTest {
         when(this.typeRepository.create("test-name")).thenReturn(new Type(Long.valueOf(0), "test-name", Long.valueOf(1), Long.valueOf(2)));
 
         this.mockMvc.perform(
-            post("/types").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"test-name\"}").accept(MediaType.APPLICATION_JSON)) //
+            post("/types").contentType(ApplicationMediaType.TYPE).content("{\"name\":\"test-name\"}").accept(ApplicationMediaType.TYPE)) //
         .andExpect(status().isCreated()) //
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON)) //
+        .andExpect(content().contentType(ApplicationMediaType.TYPE)) //
         .andExpect(jsonPath("$.name").value("test-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0")) //
         .andExpect(
@@ -79,9 +93,9 @@ public class TypeControllerIntegrationTest {
     public void read() throws Exception {
         when(this.typeRepository.read(Long.valueOf(0))).thenReturn(new Type(Long.valueOf(0), "test-name", Long.valueOf(1), Long.valueOf(2)));
 
-        this.mockMvc.perform(get("/types/{typeId}", 0).accept(MediaType.APPLICATION_JSON)) //
+        this.mockMvc.perform(get("/types/{typeId}", 0).accept(ApplicationMediaType.TYPE)) //
         .andExpect(status().isOk()) //
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON)) //
+        .andExpect(content().contentType(ApplicationMediaType.TYPE)) //
         .andExpect(jsonPath("$.name").value("test-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0")) //
         .andExpect(
@@ -95,10 +109,9 @@ public class TypeControllerIntegrationTest {
             new Type(Long.valueOf(0), "new-test-name", Long.valueOf(1), Long.valueOf(2)));
 
         this.mockMvc.perform(
-            put("/types/{typeId}", 0).contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"new-test-name\"}").accept(
-                MediaType.APPLICATION_JSON)) //
+            put("/types/{typeId}", 0).contentType(ApplicationMediaType.TYPE).content("{\"name\":\"new-test-name\"}").accept(ApplicationMediaType.TYPE)) //
         .andExpect(status().isOk()) //
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON)) //
+        .andExpect(content().contentType(ApplicationMediaType.TYPE)) //
         .andExpect(jsonPath("$.name").value("new-test-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0")) //
         .andExpect(

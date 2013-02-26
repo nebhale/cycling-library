@@ -1,3 +1,18 @@
+/*
+ * Copyright 2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.nebhale.cyclinglibrary.web;
 
@@ -16,7 +31,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -52,10 +66,10 @@ public class CollectionControllerIntegrationTest {
             new Collection(Long.valueOf(0), Long.valueOf(1), "test-name", Long.valueOf(2), Long.valueOf(3)));
 
         this.mockMvc.perform(
-            post("/types/{typeId}/collections", 0).contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"test-name\"}").accept(
-                MediaType.APPLICATION_JSON)) //
+            post("/types/{typeId}/collections", 0).contentType(ApplicationMediaType.COLLECTION).content("{\"name\":\"test-name\"}").accept(
+                ApplicationMediaType.COLLECTION)) //
         .andExpect(status().isCreated()) //
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON)) //
+        .andExpect(content().contentType(ApplicationMediaType.COLLECTION)) //
         .andExpect(jsonPath("$.name").value("test-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1")) //
         .andExpect(
@@ -68,9 +82,9 @@ public class CollectionControllerIntegrationTest {
         when(this.collectionRepository.read(Long.valueOf(1))).thenReturn(
             new Collection(Long.valueOf(0), Long.valueOf(1), "test-name", Long.valueOf(2), Long.valueOf(3)));
 
-        this.mockMvc.perform(get("/types/{typeId}/collections/{collectionId}", 0, 1).accept(MediaType.APPLICATION_JSON)) //
+        this.mockMvc.perform(get("/types/{typeId}/collections/{collectionId}", 0, 1).accept(ApplicationMediaType.COLLECTION)) //
         .andExpect(status().isOk()) //
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON)) //
+        .andExpect(content().contentType(ApplicationMediaType.COLLECTION)) //
         .andExpect(jsonPath("$.name").value("test-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1")) //
         .andExpect(
@@ -84,10 +98,10 @@ public class CollectionControllerIntegrationTest {
             new Collection(Long.valueOf(0), Long.valueOf(1), "new-test-name", Long.valueOf(2), Long.valueOf(3)));
 
         this.mockMvc.perform(
-            put("/types/{typeId}/collections/{collectionId}", 0, 1).contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"new-test-name\"}").accept(
-                MediaType.APPLICATION_JSON)) //
+            put("/types/{typeId}/collections/{collectionId}", 0, 1).contentType(ApplicationMediaType.COLLECTION).content(
+                "{\"name\":\"new-test-name\"}").accept(ApplicationMediaType.COLLECTION)) //
         .andExpect(status().isOk()) //
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON)) //
+        .andExpect(content().contentType(ApplicationMediaType.COLLECTION)) //
         .andExpect(jsonPath("$.name").value("new-test-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1")) //
         .andExpect(
