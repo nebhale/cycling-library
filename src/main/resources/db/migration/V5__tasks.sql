@@ -15,7 +15,7 @@
  */
 
 CREATE TABLE tasks(
-	id IDENTITY PRIMARY KEY,
+	id SERIAL PRIMARY KEY,
 	status VARCHAR(16),
 	message VARCHAR(128)
 );

@@ -25,9 +25,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Configuration of utility components
+ */
 @Configuration
 @ComponentScan
-class UtilConfiguration {
+public class UtilConfiguration {
 
     @Bean
     ScheduledExecutorService executorService() {

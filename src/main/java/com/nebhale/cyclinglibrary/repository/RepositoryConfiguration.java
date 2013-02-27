@@ -16,8 +16,12 @@
 
 package com.nebhale.cyclinglibrary.repository;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import javax.sql.DataSource;
 
+import org.postgresql.Driver;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -25,26 +29,48 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.util.Assert;
 
+import com.googlecode.flyway.core.Flyway;
+import com.jolbox.bonecp.BoneCPDataSource;
+
+/**
+ * Configuration of repository components
+ */
 @Configuration
 @ComponentScan
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
-class RepositoryConfiguration {
+public class RepositoryConfiguration {
+
+    private static final String DB_URL_PROPERTY_NAME = "HEROKU_POSTGRESQL_JADE_URL";
 
     @Bean
-    DataSource dataSource() {
-        return null;
-        // DataSource dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
+    DataSource dataSource() throws URISyntaxException {
+        String dbUrlProperty = System.getenv(DB_URL_PROPERTY_NAME);
+        Assert.hasText(dbUrlProperty, String.format("The enviroment variable '%s' must be specified", DB_URL_PROPERTY_NAME));
 
-        // Flyway flyway = new Flyway();
-        // flyway.setDataSource(dataSource);
-        // flyway.migrate();
+        URI dbUri = new URI(dbUrlProperty);
 
-        // return dataSource;
+        String username = dbUri.getUserInfo().split(":")[0];
+        String password = dbUri.getUserInfo().split(":")[1];
+        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath()
+            + "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory";
+
+        BoneCPDataSource dataSource = new BoneCPDataSource();
+        dataSource.setDriverClass(Driver.class.getCanonicalName());
+        dataSource.setJdbcUrl(dbUrl);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+
+        Flyway flyway = new Flyway();
+        flyway.setDataSource(dataSource);
+        flyway.migrate();
+
+        return dataSource;
     }
 
     @Bean
-    PlatformTransactionManager transactionManager() {
+    PlatformTransactionManager transactionManager() throws URISyntaxException {
         return new DataSourceTransactionManager(dataSource());
     }
 }
