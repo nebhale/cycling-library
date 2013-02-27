@@ -29,10 +29,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Configuration of web components
+ */
 @Configuration
 @ComponentScan
 @EnableWebMvc
-class WebConfiguration extends WebMvcConfigurerAdapter {
+public class WebConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     ObjectMapper objectMapper() {
