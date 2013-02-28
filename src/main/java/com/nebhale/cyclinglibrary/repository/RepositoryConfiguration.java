@@ -42,7 +42,7 @@ import com.jolbox.bonecp.BoneCPDataSource;
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 public class RepositoryConfiguration {
 
-    private static final String DB_URL_PROPERTY_NAME = "HEROKU_POSTGRESQL_JADE_URL";
+    private static final String DB_URL_PROPERTY_NAME = "DATABASE_URL";
 
     @Bean
     DataSource dataSource() throws URISyntaxException {
