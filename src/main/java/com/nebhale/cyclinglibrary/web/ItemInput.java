@@ -23,16 +23,23 @@ final class ItemInput {
 
     private final String name;
 
+    private final String shortName;
+
     private final String points;
 
     @JsonCreator
-    ItemInput(@JsonProperty("name") String name, @JsonProperty("points") String points) {
+    ItemInput(@JsonProperty("name") String name, @JsonProperty("shortName") String shortName, @JsonProperty("points") String points) {
         this.name = name;
+        this.shortName = shortName;
         this.points = points;
     }
 
     String getName() {
         return this.name;
+    }
+
+    String getShortName() {
+        return this.shortName;
     }
 
     String getPoints() {
@@ -41,7 +48,7 @@ final class ItemInput {
 
     @Override
     public String toString() {
-        return "ItemInput [name=" + this.name + ", points=" + this.points + "]";
+        return "ItemInput [name=" + this.name + ", shortName=" + this.shortName + ", points=" + this.points + "]";
     }
 
 }

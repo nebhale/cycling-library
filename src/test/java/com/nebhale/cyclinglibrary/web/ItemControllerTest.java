@@ -51,16 +51,16 @@ public final class ItemControllerTest {
         when(this.pointParser.parse(eq("test-points"), callback.capture())).thenReturn(task);
         List<Point> points = Arrays.asList();
 
-        Task result = this.controller.create(Long.valueOf(1), new ItemInput("test-name", "test-points"));
+        Task result = this.controller.create(Long.valueOf(1), new ItemInput("test-name", "test-short-name", "test-points"));
         callback.getValue().finished(points);
 
         assertSame(task, result);
-        verify(this.itemRepository).create(Long.valueOf(1), "test-name", points);
+        verify(this.itemRepository).create(Long.valueOf(1), "test-name", "test-short-name", points);
     }
 
     @Test
     public void read() {
-        Item item = new Item(Long.valueOf(0), Long.valueOf(1), Long.valueOf(2), "test-name");
+        Item item = new Item(Long.valueOf(0), Long.valueOf(1), Long.valueOf(2), "test-name", "test-short-name");
         when(this.itemRepository.read(Long.valueOf(2))).thenReturn(item);
 
         Item result = this.controller.read(Long.valueOf(2));
@@ -75,11 +75,11 @@ public final class ItemControllerTest {
         when(this.pointParser.parse(eq("new-test-points"), callback.capture())).thenReturn(task);
         List<Point> points = Arrays.asList();
 
-        Task result = this.controller.update(Long.valueOf(2), new ItemInput("new-test-name", "new-test-points"));
+        Task result = this.controller.update(Long.valueOf(2), new ItemInput("new-test-name", "new-test-short-name", "new-test-points"));
         callback.getValue().finished(points);
 
         assertSame(task, result);
-        verify(this.itemRepository).update(Long.valueOf(2), "new-test-name", points);
+        verify(this.itemRepository).update(Long.valueOf(2), "new-test-name", "new-test-short-name", points);
     }
 
     @Test

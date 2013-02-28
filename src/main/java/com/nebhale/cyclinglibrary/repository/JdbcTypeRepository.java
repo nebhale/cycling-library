@@ -56,14 +56,16 @@ final class JdbcTypeRepository implements TypeRepository {
     @Transactional(readOnly = true)
     public Set<Type> find() {
         return new HashSet<Type>(this.jdbcTemplate.query(
-            "SELECT types.id, types.name, collections.id FROM types LEFT OUTER JOIN collections ON types.id = collections.typeId", SET_EXTRACTOR));
+            "SELECT types.id, types.name, types.shortName, collections.id FROM types LEFT OUTER JOIN collections ON types.id = collections.typeId",
+            SET_EXTRACTOR));
     }
 
     @Override
     @Transactional(readOnly = false)
-    public Type create(String name) {
+    public Type create(String name, String shortName) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("name", name);
+        parameters.put("shortName", shortName);
 
         long id = this.createStatement.executeAndReturnKey(parameters).longValue();
 
@@ -74,14 +76,21 @@ final class JdbcTypeRepository implements TypeRepository {
     @Transactional(readOnly = true)
     public Type read(Long typeId) {
         return this.jdbcTemplate.query(
-            "SELECT types.id, types.name, collections.id FROM types LEFT OUTER JOIN collections ON types.id = collections.typeId WHERE types.id = ?",
+            "SELECT types.id, types.name, types.shortName, collections.id FROM types LEFT OUTER JOIN collections ON types.id = collections.typeId WHERE types.id = ?",
             new Object[] { typeId }, TYPE_EXTRACTOR);
     }
 
     @Override
     @Transactional(readOnly = false)
-    public Type update(Long typeId, String name) {
-        this.jdbcTemplate.update("UPDATE types SET name = ? WHERE id = ?", name, typeId);
+    public Type update(Long typeId, String name, String shortName) {
+        if (name != null) {
+            this.jdbcTemplate.update("UPDATE types SET name = ? WHERE id = ?", name, typeId);
+        }
+
+        if (shortName != null) {
+            this.jdbcTemplate.update("UPDATE types SET shortName = ? WHERE id = ?", shortName, typeId);
+        }
+
         return read(typeId);
     }
 
@@ -115,15 +124,17 @@ final class JdbcTypeRepository implements TypeRepository {
 
                     context.id = candidateId;
                     context.name = rs.getString(2);
+                    context.shortName = rs.getString(3);
                 } else if (candidateId != context.id) {
                     set.add(context.create());
                     context = new TypeContext();
 
                     context.id = candidateId;
                     context.name = rs.getString(2);
+                    context.shortName = rs.getString(3);
                 }
 
-                Long candidateCollectionId = rs.getLong(3);
+                Long candidateCollectionId = rs.getLong(4);
                 if (!rs.wasNull()) {
                     context.collectionIds.add(candidateCollectionId);
                 }
@@ -135,7 +146,6 @@ final class JdbcTypeRepository implements TypeRepository {
 
             return set;
         }
-
     }
 
     private static final class TypeContext {
@@ -144,10 +154,12 @@ final class JdbcTypeRepository implements TypeRepository {
 
         private volatile String name;
 
+        private volatile String shortName;
+
         private final Set<Long> collectionIds = new HashSet<>();
 
         private Type create() {
-            return new Type(this.id, this.name, this.collectionIds);
+            return new Type(this.id, this.name, this.shortName, this.collectionIds);
         }
     }
 

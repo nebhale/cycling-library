@@ -34,29 +34,32 @@ public final class JdbcCollectionRepositoryTest extends AbstractJdbcRepositoryTe
 
     @Test
     public void create() {
-        this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
+        this.jdbcTemplate.update("INSERT INTO types(id, name, shortName) VALUES(?, ?, ?)", 0, "test-name", "test-short-name");
 
-        Collection collection = this.collectionRepository.create(Long.valueOf(0), "test-name");
+        Collection collection = this.collectionRepository.create(Long.valueOf(0), "test-name", "test-short-name");
 
-        Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT id, typeId, name FROM collections");
+        Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT id, typeId, name, shortName FROM collections");
         assertEquals(Long.valueOf(0), data.get("typeId"));
         assertEquals("test-name", data.get("name"));
+        assertEquals("test-short-name", data.get("shortName"));
         assertEquals(data.get("id"), collection.getId());
         assertEquals(data.get("typeId"), collection.getTypeId());
         assertEquals(data.get("name"), collection.getName());
+        assertEquals(data.get("shortName"), collection.getShortName());
     }
 
     @Test
     public void read() {
-        this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
-        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES(?, ?, ?)", 1, 0, "test-name");
-        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name) VALUES(?, ?, ?)", 2, 1, "test-name");
-        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name) VALUES(?, ?, ?)", 3, 1, "test-name");
+        this.jdbcTemplate.update("INSERT INTO types(id, name, shortName) VALUES(?, ?, ?)", 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name, shortName) VALUES(?, ?, ?, ?)", 1, 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name, shortName) VALUES(?, ?, ?, ?)", 2, 1, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name, shortName) VALUES(?, ?, ?, ?)", 3, 1, "test-name", "test-short-name");
 
         Collection collection = this.collectionRepository.read(Long.valueOf(1));
         assertEquals(Long.valueOf(1), collection.getId());
         assertEquals(Long.valueOf(0), collection.getTypeId());
         assertEquals("test-name", collection.getName());
+        assertEquals("test-short-name", collection.getShortName());
         assertEquals(Sets.asSet(Long.valueOf(2), Long.valueOf(3)), collection.getItemIds());
     }
 
@@ -66,26 +69,45 @@ public final class JdbcCollectionRepositoryTest extends AbstractJdbcRepositoryTe
     }
 
     @Test
-    public void update() {
-        this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
-        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES(?, ?, ?)", 1, 0, "test-name");
-        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name) VALUES(?, ?, ?)", 2, 1, "test-name");
-        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name) VALUES(?, ?, ?)", 3, 1, "test-name");
+    public void updateName() {
+        this.jdbcTemplate.update("INSERT INTO types(id, name, shortName) VALUES(?, ?, ?)", 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name, shortName) VALUES(?, ?, ?, ?)", 1, 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name, shortName) VALUES(?, ?, ?, ?)", 2, 1, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name, shortName) VALUES(?, ?, ?, ?)", 3, 1, "test-name", "test-short-name");
 
-        Collection collection = this.collectionRepository.update(Long.valueOf(1), "new-test-name");
+        Collection collection = this.collectionRepository.update(Long.valueOf(1), "new-test-name", null);
 
-        Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name FROM collections WHERE id = ?", 1);
+        Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name, shortName FROM collections WHERE id = ?", 1);
         assertEquals("new-test-name", data.get("name"));
+        assertEquals("test-short-name", data.get("shortName"));
         assertEquals(data.get("name"), collection.getName());
+        assertEquals(data.get("shortName"), collection.getShortName());
+        assertEquals(Sets.asSet(Long.valueOf(2), Long.valueOf(3)), collection.getItemIds());
+    }
+
+    @Test
+    public void updateShortName() {
+        this.jdbcTemplate.update("INSERT INTO types(id, name, shortName) VALUES(?, ?, ?)", 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name, shortName) VALUES(?, ?, ?, ?)", 1, 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name, shortName) VALUES(?, ?, ?, ?)", 2, 1, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name, shortName) VALUES(?, ?, ?, ?)", 3, 1, "test-name", "test-short-name");
+
+        Collection collection = this.collectionRepository.update(Long.valueOf(1), null, "new-test-short-name");
+
+        Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name, shortName FROM collections WHERE id = ?", 1);
+        assertEquals("test-name", data.get("name"));
+        assertEquals("new-test-short-name", data.get("shortName"));
+        assertEquals(data.get("name"), collection.getName());
+        assertEquals(data.get("shortName"), collection.getShortName());
         assertEquals(Sets.asSet(Long.valueOf(2), Long.valueOf(3)), collection.getItemIds());
     }
 
     @Test
     public void delete() {
-        this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
-        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES(?, ?, ?)", 1, 0, "test-name");
-        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name) VALUES(?, ?, ?)", 2, 1, "test-name");
-        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name) VALUES(?, ?, ?)", 3, 1, "test-name");
+        this.jdbcTemplate.update("INSERT INTO types(id, name, shortName) VALUES(?, ?, ?)", 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name, shortName) VALUES(?, ?, ?, ?)", 1, 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name, shortName) VALUES(?, ?, ?, ?)", 2, 1, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name, shortName) VALUES(?, ?, ?, ?)", 3, 1, "test-name", "test-short-name");
 
         this.collectionRepository.delete(Long.valueOf(1));
 

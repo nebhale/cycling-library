@@ -52,10 +52,11 @@ final class JdbcCollectionRepository implements CollectionRepository {
 
     @Override
     @Transactional(readOnly = false)
-    public Collection create(Long typeId, String name) {
+    public Collection create(Long typeId, String name, String shortName) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("typeId", typeId);
         parameters.put("name", name);
+        parameters.put("shortName", shortName);
 
         long id = this.createStatement.executeAndReturnKey(parameters).longValue();
 
@@ -66,14 +67,21 @@ final class JdbcCollectionRepository implements CollectionRepository {
     @Transactional(readOnly = true)
     public Collection read(Long collectionId) {
         return this.jdbcTemplate.query(
-            "SELECT types.id, collections.id, collections.name, items.id FROM types, collections LEFT OUTER JOIN items ON collections.id = items.collectionId WHERE collections.id = ? AND collections.typeId = types.id",
+            "SELECT types.id, collections.id, collections.name, collections.shortName, items.id FROM types, collections LEFT OUTER JOIN items ON collections.id = items.collectionId WHERE collections.id = ? AND collections.typeId = types.id",
             new Object[] { collectionId }, COLLECTION_EXTRACTOR);
     }
 
     @Override
     @Transactional(readOnly = false)
-    public Collection update(Long collectionId, String name) {
-        this.jdbcTemplate.update("UPDATE collections SET name = ? WHERE id = ?", name, collectionId);
+    public Collection update(Long collectionId, String name, String shortName) {
+        if (name != null) {
+            this.jdbcTemplate.update("UPDATE collections SET name = ? WHERE id = ?", name, collectionId);
+        }
+
+        if (shortName != null) {
+            this.jdbcTemplate.update("UPDATE collections SET shortName = ? WHERE id = ?", shortName, collectionId);
+        }
+
         return read(collectionId);
     }
 
@@ -96,9 +104,10 @@ final class JdbcCollectionRepository implements CollectionRepository {
                     context.typeId = rs.getLong(1);
                     context.id = rs.getLong(2);
                     context.name = rs.getString(3);
+                    context.shortName = rs.getString(4);
                 }
 
-                Long candidateItemId = rs.getLong(4);
+                Long candidateItemId = rs.getLong(5);
                 if (!rs.wasNull()) {
                     context.itemIds.add(candidateItemId);
                 }
@@ -117,10 +126,12 @@ final class JdbcCollectionRepository implements CollectionRepository {
 
         private volatile String name;
 
+        private volatile String shortName;
+
         private final Set<Long> itemIds = new HashSet<>();
 
         private Collection create() {
-            return new Collection(this.typeId, this.id, this.name, this.itemIds);
+            return new Collection(this.typeId, this.id, this.name, this.shortName, this.itemIds);
         }
     }
 

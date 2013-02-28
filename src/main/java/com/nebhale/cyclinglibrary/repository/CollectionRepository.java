@@ -28,9 +28,10 @@ public interface CollectionRepository {
      * 
      * @param typeId The id of the type the collection is related to
      * @param name The name of the collection
+     * @param shortName The short name of the collection
      * @return The created collection
      */
-    Collection create(Long typeId, String name);
+    Collection create(Long typeId, String name, String shortName);
 
     /**
      * Read a collection identified by its id
@@ -45,9 +46,10 @@ public interface CollectionRepository {
      * 
      * @param collectionId The id of the collection to update
      * @param name The new name of the collection
+     * @param shortName The new short name of the collection
      * @return The updated collection
      */
-    Collection update(Long collectionId, String name);
+    Collection update(Long collectionId, String name, String shortName);
 
     /**
      * Delete a collection identified by its id

@@ -45,17 +45,17 @@ public final class TypeControllerTest {
 
     @Test
     public void create() {
-        Type type = new Type(Long.valueOf(0), "test-name");
-        when(this.typeRepository.create("test-name")).thenReturn(type);
+        Type type = new Type(Long.valueOf(0), "test-name", "test-short-name");
+        when(this.typeRepository.create("test-name", "test-short-name")).thenReturn(type);
 
-        Type result = this.controller.create(new TypeInput("test-name"));
+        Type result = this.controller.create(new TypeInput("test-name", "test-short-name"));
 
         assertSame(type, result);
     }
 
     @Test
     public void read() {
-        Type type = new Type(Long.valueOf(0), "test-name");
+        Type type = new Type(Long.valueOf(0), "test-name", "test-short-name");
         when(this.typeRepository.read(Long.valueOf(0))).thenReturn(type);
 
         Type result = this.controller.read(Long.valueOf(0));
@@ -65,10 +65,10 @@ public final class TypeControllerTest {
 
     @Test
     public void update() {
-        Type type = new Type(Long.valueOf(0), "new-test-name");
-        when(this.typeRepository.update(Long.valueOf(0), "new-test-name")).thenReturn(type);
+        Type type = new Type(Long.valueOf(0), "new-test-name", "new-test-short-name");
+        when(this.typeRepository.update(Long.valueOf(0), "new-test-name", "new-test-short-name")).thenReturn(type);
 
-        Type result = this.controller.update(Long.valueOf(0), new TypeInput("new-test-name"));
+        Type result = this.controller.update(Long.valueOf(0), new TypeInput("new-test-name", "new-test-short-name"));
 
         assertSame(type, result);
     }

@@ -29,6 +29,8 @@ public final class Collection extends AbstractIdentifableSupport {
 
     private final String name;
 
+    private final String shortName;
+
     private final Set<Long> itemIds;
 
     /**
@@ -37,10 +39,11 @@ public final class Collection extends AbstractIdentifableSupport {
      * @param typeId The id of the type the collection is related to
      * @param id The id of the collection
      * @param name The name of the collection
+     * @param shortName The short name of the type
      * @param itemIds The ids of the items related to this collection
      */
-    public Collection(Long typeId, Long id, String name, Long... itemIds) {
-        this(typeId, id, name, Sets.asSet(itemIds));
+    public Collection(Long typeId, Long id, String name, String shortName, Long... itemIds) {
+        this(typeId, id, name, shortName, Sets.asSet(itemIds));
     }
 
     /**
@@ -49,12 +52,14 @@ public final class Collection extends AbstractIdentifableSupport {
      * @param typeId The id of the type the collection is related to
      * @param id The id of the collection
      * @param name The name of the collection
+     * @param shortName The short name of the type
      * @param itemIds The ids of the items related to this collection
      */
-    public Collection(Long typeId, Long id, String name, Set<Long> itemIds) {
+    public Collection(Long typeId, Long id, String name, String shortName, Set<Long> itemIds) {
         super(id);
         this.typeId = typeId;
         this.name = name;
+        this.shortName = shortName;
         this.itemIds = itemIds;
     }
 
@@ -77,6 +82,15 @@ public final class Collection extends AbstractIdentifableSupport {
     }
 
     /**
+     * Returns the short name of the type
+     * 
+     * @return the short name of the type
+     */
+    public String getShortName() {
+        return this.shortName;
+    }
+
+    /**
      * Returns the ids of the items related to this collection
      * 
      * @return the ids of the items related to this collection
@@ -87,7 +101,8 @@ public final class Collection extends AbstractIdentifableSupport {
 
     @Override
     public String toString() {
-        return "Collection [typeId=" + this.typeId + ", name=" + this.name + ", itemIds=" + this.itemIds + ", getId()=" + getId() + "]";
+        return "Collection [typeId=" + this.typeId + ", name=" + this.name + ", shortName=" + this.shortName + ", itemIds=" + this.itemIds
+            + ", getId()=" + getId() + "]";
     }
 
 }

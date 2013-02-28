@@ -55,16 +55,17 @@ final class JdbcItemRepository implements ItemRepository {
 
     @Override
     @Transactional(readOnly = false)
-    public Item create(Long collectionId, String name, Point... points) {
-        return create(collectionId, name, Arrays.asList(points));
+    public Item create(Long collectionId, String name, String shortName, Point... points) {
+        return create(collectionId, name, shortName, Arrays.asList(points));
     }
 
     @Override
     @Transactional(readOnly = false)
-    public Item create(Long collectionId, String name, List<Point> points) {
+    public Item create(Long collectionId, String name, String shortName, List<Point> points) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("collectionId", collectionId);
         parameters.put("name", name);
+        parameters.put("shortName", shortName);
 
         long itemId = this.createStatement.executeAndReturnKey(parameters).longValue();
         insertPoints(itemId, points);
@@ -76,21 +77,25 @@ final class JdbcItemRepository implements ItemRepository {
     @Transactional(readOnly = true)
     public Item read(Long itemId) {
         return this.jdbcTemplate.query(
-            "SELECT types.id, collections.id, items.id, items.name, points.id, points.latitude, points.longitude, points.elevation FROM types, collections, items LEFT OUTER JOIN points ON items.id = points.itemId WHERE items.id = ? AND items.collectionId = collections.id AND collections.typeId = types.id",
+            "SELECT types.id, collections.id, items.id, items.name, items.shortName, points.id, points.latitude, points.longitude, points.elevation FROM types, collections, items LEFT OUTER JOIN points ON items.id = points.itemId WHERE items.id = ? AND items.collectionId = collections.id AND collections.typeId = types.id",
             new Object[] { itemId }, ITEM_EXTRACTOR);
     }
 
     @Override
     @Transactional(readOnly = false)
-    public Item update(Long itemId, String name, Point... points) {
-        return update(itemId, name, Arrays.asList(points));
+    public Item update(Long itemId, String name, String shortName, Point... points) {
+        return update(itemId, name, shortName, Arrays.asList(points));
     }
 
     @Override
     @Transactional(readOnly = false)
-    public Item update(Long itemId, String name, List<Point> points) {
+    public Item update(Long itemId, String name, String shortName, List<Point> points) {
         if (name != null) {
             this.jdbcTemplate.update("UPDATE items SET name = ? WHERE id = ?", name, itemId);
+        }
+
+        if (shortName != null) {
+            this.jdbcTemplate.update("UPDATE items SET shortName = ? WHERE id = ?", shortName, itemId);
         }
 
         if ((points != null) && !points.isEmpty()) {
@@ -128,12 +133,13 @@ final class JdbcItemRepository implements ItemRepository {
                     context.collectionId = rs.getLong(2);
                     context.id = rs.getLong(3);
                     context.name = rs.getString(4);
+                    context.shortName = rs.getString(5);
                 }
 
-                Long candidatePointId = rs.getLong(5);
+                Long candidatePointId = rs.getLong(6);
                 if (!rs.wasNull()) {
-                    context.points.add(new Point(context.typeId, context.collectionId, context.id, candidatePointId, rs.getDouble(6),
-                        rs.getDouble(7), rs.getDouble(8)));
+                    context.points.add(new Point(context.typeId, context.collectionId, context.id, candidatePointId, rs.getDouble(7),
+                        rs.getDouble(8), rs.getDouble(9)));
                 }
             }
 
@@ -151,11 +157,13 @@ final class JdbcItemRepository implements ItemRepository {
 
         private volatile String name;
 
+        private volatile String shortName;
+
         private final List<Point> points = new ArrayList<>();
 
         private Item create() {
             Collections.sort(this.points);
-            return new Item(this.typeId, this.collectionId, this.id, this.name, this.points);
+            return new Item(this.typeId, this.collectionId, this.id, this.name, this.shortName, this.points);
         }
     }
 

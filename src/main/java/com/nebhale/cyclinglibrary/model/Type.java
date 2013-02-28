@@ -27,6 +27,8 @@ public final class Type extends AbstractIdentifableSupport {
 
     private final String name;
 
+    private final String shortName;
+
     private final Set<Long> collectionIds;
 
     /**
@@ -34,10 +36,11 @@ public final class Type extends AbstractIdentifableSupport {
      * 
      * @param id The id of the type
      * @param name The name of the type
+     * @param shortName The short name of the type
      * @param collectionIds The ids of the collections related to this type
      */
-    public Type(Long id, String name, Long... collectionIds) {
-        this(id, name, Sets.asSet(collectionIds));
+    public Type(Long id, String name, String shortName, Long... collectionIds) {
+        this(id, name, shortName, Sets.asSet(collectionIds));
     }
 
     /**
@@ -45,11 +48,13 @@ public final class Type extends AbstractIdentifableSupport {
      * 
      * @param id The id of the type
      * @param name The name of the type
+     * @param shortName The short name of the type
      * @param collectionIds The ids of the collections related to this type
      */
-    public Type(Long id, String name, Set<Long> collectionIds) {
+    public Type(Long id, String name, String shortName, Set<Long> collectionIds) {
         super(id);
         this.name = name;
+        this.shortName = shortName;
         this.collectionIds = collectionIds;
     }
 
@@ -63,6 +68,15 @@ public final class Type extends AbstractIdentifableSupport {
     }
 
     /**
+     * Returns the short name of the type
+     * 
+     * @return the short name of the type
+     */
+    public String getShortName() {
+        return this.shortName;
+    }
+
+    /**
      * Returns the ids of the collections related to this type
      * 
      * @return the ids of the collections related to this type
@@ -73,7 +87,7 @@ public final class Type extends AbstractIdentifableSupport {
 
     @Override
     public String toString() {
-        return "Type [name=" + this.name + ", collectionIds=" + this.collectionIds + ", getId()=" + getId() + "]";
+        return "Type [name=" + this.name + ", shortName=" + this.shortName + ", collectionIds=" + this.collectionIds + ", getId()=" + getId() + "]";
     }
 
 }

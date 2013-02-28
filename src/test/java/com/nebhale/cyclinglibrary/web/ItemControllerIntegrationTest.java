@@ -84,12 +84,14 @@ public class ItemControllerIntegrationTest {
 
     @Test
     public void read() throws Exception {
-        when(this.itemRepository.read(Long.valueOf(2))).thenReturn(new Item(Long.valueOf(0), Long.valueOf(1), Long.valueOf(2), "test-name"));
+        when(this.itemRepository.read(Long.valueOf(2))).thenReturn(
+            new Item(Long.valueOf(0), Long.valueOf(1), Long.valueOf(2), "test-name", "test-short-name"));
 
         this.mockMvc.perform(get("/types/{typeId}/collections/{collectionId}/items/{itemId}", 0, 1, 2).accept(ApplicationMediaType.ITEM)) //
         .andExpect(status().isOk()) //
         .andExpect(content().contentType(ApplicationMediaType.ITEM)) //
         .andExpect(jsonPath("$.name").value("test-name")) //
+        .andExpect(jsonPath("$.shortName").value("test-short-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1/items/2"));
     }
 

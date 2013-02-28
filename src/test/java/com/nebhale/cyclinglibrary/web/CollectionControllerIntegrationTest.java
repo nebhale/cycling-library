@@ -62,15 +62,16 @@ public class CollectionControllerIntegrationTest {
 
     @Test
     public void create() throws Exception {
-        when(this.collectionRepository.create(Long.valueOf(0), "test-name")).thenReturn(
-            new Collection(Long.valueOf(0), Long.valueOf(1), "test-name", Long.valueOf(2), Long.valueOf(3)));
+        when(this.collectionRepository.create(Long.valueOf(0), "test-name", "test-short-name")).thenReturn(
+            new Collection(Long.valueOf(0), Long.valueOf(1), "test-name", "test-short-name", Long.valueOf(2), Long.valueOf(3)));
 
         this.mockMvc.perform(
-            post("/types/{typeId}/collections", 0).contentType(ApplicationMediaType.COLLECTION).content("{\"name\":\"test-name\"}").accept(
-                ApplicationMediaType.COLLECTION)) //
+            post("/types/{typeId}/collections", 0).contentType(ApplicationMediaType.COLLECTION).content(
+                "{\"name\":\"test-name\",\"shortName\":\"test-short-name\"}").accept(ApplicationMediaType.COLLECTION)) //
         .andExpect(status().isCreated()) //
         .andExpect(content().contentType(ApplicationMediaType.COLLECTION)) //
         .andExpect(jsonPath("$.name").value("test-name")) //
+        .andExpect(jsonPath("$.shortName").value("test-short-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1")) //
         .andExpect(
             jsonPath("$.links[?(@.rel== 'item')].href").value(
@@ -80,12 +81,13 @@ public class CollectionControllerIntegrationTest {
     @Test
     public void read() throws Exception {
         when(this.collectionRepository.read(Long.valueOf(1))).thenReturn(
-            new Collection(Long.valueOf(0), Long.valueOf(1), "test-name", Long.valueOf(2), Long.valueOf(3)));
+            new Collection(Long.valueOf(0), Long.valueOf(1), "test-name", "test-short-name", Long.valueOf(2), Long.valueOf(3)));
 
         this.mockMvc.perform(get("/types/{typeId}/collections/{collectionId}", 0, 1).accept(ApplicationMediaType.COLLECTION)) //
         .andExpect(status().isOk()) //
         .andExpect(content().contentType(ApplicationMediaType.COLLECTION)) //
         .andExpect(jsonPath("$.name").value("test-name")) //
+        .andExpect(jsonPath("$.shortName").value("test-short-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1")) //
         .andExpect(
             jsonPath("$.links[?(@.rel== 'item')].href").value(
@@ -94,15 +96,16 @@ public class CollectionControllerIntegrationTest {
 
     @Test
     public void update() throws Exception {
-        when(this.collectionRepository.update(Long.valueOf(1), "new-test-name")).thenReturn(
-            new Collection(Long.valueOf(0), Long.valueOf(1), "new-test-name", Long.valueOf(2), Long.valueOf(3)));
+        when(this.collectionRepository.update(Long.valueOf(1), "new-test-name", "new-test-short-name")).thenReturn(
+            new Collection(Long.valueOf(0), Long.valueOf(1), "new-test-name", "new-test-short-name", Long.valueOf(2), Long.valueOf(3)));
 
         this.mockMvc.perform(
             put("/types/{typeId}/collections/{collectionId}", 0, 1).contentType(ApplicationMediaType.COLLECTION).content(
-                "{\"name\":\"new-test-name\"}").accept(ApplicationMediaType.COLLECTION)) //
+                "{\"name\":\"new-test-name\",\"shortName\":\"new-test-short-name\"}").accept(ApplicationMediaType.COLLECTION)) //
         .andExpect(status().isOk()) //
         .andExpect(content().contentType(ApplicationMediaType.COLLECTION)) //
         .andExpect(jsonPath("$.name").value("new-test-name")) //
+        .andExpect(jsonPath("$.shortName").value("new-test-short-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1")) //
         .andExpect(
             jsonPath("$.links[?(@.rel== 'item')].href").value(

@@ -30,12 +30,13 @@ public class ItemJsonSerializerTest extends AbstractJsonSerializerTest<Item> {
 
     @Override
     protected Item getValue() {
-        return new Item(Long.valueOf(0), Long.valueOf(1), Long.valueOf(2), "test-name");
+        return new Item(Long.valueOf(0), Long.valueOf(1), Long.valueOf(2), "test-name", "test-short-name");
     }
 
     @Override
     protected void assertResult(String result) throws ParseException {
         assertValue(result, "$.name", "test-name");
+        assertValue(result, "$.shortName", "test-short-name");
         assertValue(result, "$.links[?(@.rel== 'self')].href", "http://localhost/types/0/collections/1/items/2");
     }
 

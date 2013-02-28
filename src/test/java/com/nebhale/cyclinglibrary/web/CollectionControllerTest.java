@@ -34,17 +34,17 @@ public final class CollectionControllerTest {
 
     @Test
     public void create() {
-        Collection collection = new Collection(Long.valueOf(0), Long.valueOf(1), "test-name");
-        when(this.collectionRepository.create(Long.valueOf(0), "test-name")).thenReturn(collection);
+        Collection collection = new Collection(Long.valueOf(0), Long.valueOf(1), "test-name", "test-short-name");
+        when(this.collectionRepository.create(Long.valueOf(0), "test-name", "test-short-name")).thenReturn(collection);
 
-        Collection result = this.controller.create(Long.valueOf(0), new CollectionInput("test-name"));
+        Collection result = this.controller.create(Long.valueOf(0), new CollectionInput("test-name", "test-short-name"));
 
         assertSame(collection, result);
     }
 
     @Test
     public void read() {
-        Collection collection = new Collection(Long.valueOf(0), Long.valueOf(1), "test-name");
+        Collection collection = new Collection(Long.valueOf(0), Long.valueOf(1), "test-name", "test-short-name");
         when(this.collectionRepository.read(Long.valueOf(1))).thenReturn(collection);
 
         Collection result = this.controller.read(Long.valueOf(1));
@@ -54,10 +54,10 @@ public final class CollectionControllerTest {
 
     @Test
     public void update() {
-        Collection collection = new Collection(Long.valueOf(0), Long.valueOf(1), "new-test-name");
-        when(this.collectionRepository.update(Long.valueOf(1), "new-test-name")).thenReturn(collection);
+        Collection collection = new Collection(Long.valueOf(0), Long.valueOf(1), "new-test-name", "new-test-short-name");
+        when(this.collectionRepository.update(Long.valueOf(1), "new-test-name", "new-test-short-name")).thenReturn(collection);
 
-        Collection result = this.controller.update(Long.valueOf(1), new CollectionInput("new-test-name"));
+        Collection result = this.controller.update(Long.valueOf(1), new CollectionInput("new-test-name", "new-test-short-name"));
 
         assertSame(collection, result);
     }

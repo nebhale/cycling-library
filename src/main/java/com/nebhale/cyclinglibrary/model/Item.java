@@ -30,6 +30,8 @@ public final class Item extends AbstractIdentifableSupport {
 
     private final String name;
 
+    private final String shortName;
+
     private final List<Point> points;
 
     /**
@@ -39,10 +41,11 @@ public final class Item extends AbstractIdentifableSupport {
      * @param collectionId The id of the collection the item is related to
      * @param id The id of the item
      * @param name The name of the item
+     * @param shortName The short name of the type
      * @param points The points of the item
      */
-    public Item(Long typeId, Long collectionId, Long id, String name, Point... points) {
-        this(typeId, collectionId, id, name, Arrays.asList(points));
+    public Item(Long typeId, Long collectionId, Long id, String name, String shortName, Point... points) {
+        this(typeId, collectionId, id, name, shortName, Arrays.asList(points));
     }
 
     /**
@@ -52,13 +55,15 @@ public final class Item extends AbstractIdentifableSupport {
      * @param collectionId The id of the collection the item is related to
      * @param id The id of the item
      * @param name The name of the item
+     * @param shortName The short name of the type
      * @param points The points of the item
      */
-    public Item(Long typeId, Long collectionId, Long id, String name, List<Point> points) {
+    public Item(Long typeId, Long collectionId, Long id, String name, String shortName, List<Point> points) {
         super(id);
         this.typeId = typeId;
         this.collectionId = collectionId;
         this.name = name;
+        this.shortName = shortName;
         this.points = points;
     }
 
@@ -90,6 +95,15 @@ public final class Item extends AbstractIdentifableSupport {
     }
 
     /**
+     * Returns the short name of the type
+     * 
+     * @return the short name of the type
+     */
+    public String getShortName() {
+        return this.shortName;
+    }
+
+    /**
      * Returns the points of the item
      * 
      * @return the points of the item
@@ -100,8 +114,8 @@ public final class Item extends AbstractIdentifableSupport {
 
     @Override
     public String toString() {
-        return "Item [typeId=" + this.typeId + ", collectionId=" + this.collectionId + ", name=" + this.name + ", points=" + this.points
-            + ", getId()=" + getId() + "]";
+        return "Item [typeId=" + this.typeId + ", collectionId=" + this.collectionId + ", name=" + this.name + ", shortName=" + this.shortName
+            + ", points=" + this.points + ", getId()=" + getId() + "]";
     }
 
 }

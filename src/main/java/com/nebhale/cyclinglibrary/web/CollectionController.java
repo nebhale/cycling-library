@@ -44,7 +44,7 @@ final class CollectionController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     Collection create(@PathVariable Long typeId, @RequestBody CollectionInput collectionInput) {
-        return this.collectionRepository.create(typeId, collectionInput.getName());
+        return this.collectionRepository.create(typeId, collectionInput.getName(), collectionInput.getShortName());
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{collectionId}", produces = ApplicationMediaType.COLLECTION_VALUE)
@@ -56,7 +56,7 @@ final class CollectionController {
     @RequestMapping(method = RequestMethod.PUT, value = "/{collectionId}", consumes = ApplicationMediaType.COLLECTION_VALUE, produces = ApplicationMediaType.COLLECTION_VALUE)
     @ResponseBody
     Collection update(@PathVariable Long collectionId, @RequestBody CollectionInput collectionInput) {
-        return this.collectionRepository.update(collectionId, collectionInput.getName());
+        return this.collectionRepository.update(collectionId, collectionInput.getName(), collectionInput.getShortName());
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{collectionId}")

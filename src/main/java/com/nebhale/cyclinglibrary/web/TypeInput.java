@@ -23,18 +23,25 @@ final class TypeInput {
 
     private final String name;
 
+    private final String shortName;
+
     @JsonCreator
-    TypeInput(@JsonProperty("name") String name) {
+    TypeInput(@JsonProperty("name") String name, @JsonProperty("shortName") String shortName) {
         this.name = name;
+        this.shortName = shortName;
     }
 
     String getName() {
         return this.name;
     }
 
+    String getShortName() {
+        return this.shortName;
+    }
+
     @Override
     public String toString() {
-        return "TypeInput [name=" + this.name + "]";
+        return "TypeInput [name=" + this.name + ", shortName=" + this.shortName + "]";
     }
 
 }

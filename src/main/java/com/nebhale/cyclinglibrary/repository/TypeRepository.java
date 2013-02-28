@@ -36,9 +36,10 @@ public interface TypeRepository {
      * Create a new type
      * 
      * @param name The name of the type
+     * @param shortName The short name of the type
      * @return The created type
      */
-    Type create(String name);
+    Type create(String name, String shortName);
 
     /**
      * Read a type identified by its id
@@ -53,9 +54,10 @@ public interface TypeRepository {
      * 
      * @param typeId The id of the type to update
      * @param name The new name of the type
+     * @param shortName The new short name of the type
      * @return The updated type
      */
-    Type update(Long typeId, String name);
+    Type update(Long typeId, String name, String shortName);
 
     /**
      * Delete a type identified by its id

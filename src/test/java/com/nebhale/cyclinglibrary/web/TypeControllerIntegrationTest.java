@@ -65,7 +65,7 @@ public class TypeControllerIntegrationTest {
     @Test
     public void find() throws Exception {
         Set<Type> types = new HashSet<>();
-        types.add(new Type(Long.valueOf(0), "test-name-1", Long.valueOf(1), Long.valueOf(2)));
+        types.add(new Type(Long.valueOf(0), "test-name-1", "test-short-name-1", Long.valueOf(1), Long.valueOf(2)));
         when(this.typeRepository.find()).thenReturn(types);
 
         this.mockMvc.perform(get("/types").accept(ApplicationMediaType.TYPE)) //
@@ -76,13 +76,16 @@ public class TypeControllerIntegrationTest {
 
     @Test
     public void create() throws Exception {
-        when(this.typeRepository.create("test-name")).thenReturn(new Type(Long.valueOf(0), "test-name", Long.valueOf(1), Long.valueOf(2)));
+        when(this.typeRepository.create("test-name", "test-short-name")).thenReturn(
+            new Type(Long.valueOf(0), "test-name", "test-short-name", Long.valueOf(1), Long.valueOf(2)));
 
         this.mockMvc.perform(
-            post("/types").contentType(ApplicationMediaType.TYPE).content("{\"name\":\"test-name\"}").accept(ApplicationMediaType.TYPE)) //
+            post("/types").contentType(ApplicationMediaType.TYPE).content("{\"name\":\"test-name\",\"shortName\":\"test-short-name\"}").accept(
+                ApplicationMediaType.TYPE)) //
         .andExpect(status().isCreated()) //
         .andExpect(content().contentType(ApplicationMediaType.TYPE)) //
         .andExpect(jsonPath("$.name").value("test-name")) //
+        .andExpect(jsonPath("$.shortName").value("test-short-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0")) //
         .andExpect(
             jsonPath("$.links[?(@.rel== 'collection')].href").value(
@@ -91,12 +94,14 @@ public class TypeControllerIntegrationTest {
 
     @Test
     public void read() throws Exception {
-        when(this.typeRepository.read(Long.valueOf(0))).thenReturn(new Type(Long.valueOf(0), "test-name", Long.valueOf(1), Long.valueOf(2)));
+        when(this.typeRepository.read(Long.valueOf(0))).thenReturn(
+            new Type(Long.valueOf(0), "test-name", "test-short-name", Long.valueOf(1), Long.valueOf(2)));
 
         this.mockMvc.perform(get("/types/{typeId}", 0).accept(ApplicationMediaType.TYPE)) //
         .andExpect(status().isOk()) //
         .andExpect(content().contentType(ApplicationMediaType.TYPE)) //
         .andExpect(jsonPath("$.name").value("test-name")) //
+        .andExpect(jsonPath("$.shortName").value("test-short-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0")) //
         .andExpect(
             jsonPath("$.links[?(@.rel== 'collection')].href").value(
@@ -105,14 +110,16 @@ public class TypeControllerIntegrationTest {
 
     @Test
     public void update() throws Exception {
-        when(this.typeRepository.update(Long.valueOf(0), "new-test-name")).thenReturn(
-            new Type(Long.valueOf(0), "new-test-name", Long.valueOf(1), Long.valueOf(2)));
+        when(this.typeRepository.update(Long.valueOf(0), "new-test-name", "new-test-short-name")).thenReturn(
+            new Type(Long.valueOf(0), "new-test-name", "new-test-short-name", Long.valueOf(1), Long.valueOf(2)));
 
         this.mockMvc.perform(
-            put("/types/{typeId}", 0).contentType(ApplicationMediaType.TYPE).content("{\"name\":\"new-test-name\"}").accept(ApplicationMediaType.TYPE)) //
+            put("/types/{typeId}", 0).contentType(ApplicationMediaType.TYPE).content(
+                "{\"name\":\"new-test-name\",\"shortName\":\"new-test-short-name\"}").accept(ApplicationMediaType.TYPE)) //
         .andExpect(status().isOk()) //
         .andExpect(content().contentType(ApplicationMediaType.TYPE)) //
         .andExpect(jsonPath("$.name").value("new-test-name")) //
+        .andExpect(jsonPath("$.shortName").value("new-test-short-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0")) //
         .andExpect(
             jsonPath("$.links[?(@.rel== 'collection')].href").value(

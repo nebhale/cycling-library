@@ -24,11 +24,12 @@ public class ItemInputTest {
 
     @Test
     public void test() {
-        ItemInput itemInput = new ItemInput("test-name", "test-points");
+        ItemInput itemInput = new ItemInput("test-name", "test-short-name", "test-points");
 
         assertEquals("test-name", itemInput.getName());
+        assertEquals("test-short-name", itemInput.getShortName());
         assertEquals("test-points", itemInput.getPoints());
-        assertEquals("ItemInput [name=test-name, points=test-points]", itemInput.toString());
+        assertEquals("ItemInput [name=test-name, shortName=test-short-name, points=test-points]", itemInput.toString());
     }
 
 }

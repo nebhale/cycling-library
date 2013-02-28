@@ -38,17 +38,20 @@ public final class JdbcItemRepositoryTest extends AbstractJdbcRepositoryTest {
 
     @Test
     public void create() {
-        this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
-        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES(?, ?, ?)", 1, 0, "test-name");
+        this.jdbcTemplate.update("INSERT INTO types(id, name, shortName) VALUES(?, ?, ?)", 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name, shortName) VALUES(?, ?, ?, ?)", 1, 0, "test-name", "test-short-name");
 
-        Item item = this.itemRepository.create(Long.valueOf(1), "test-name", StubPointFactory.create(0), StubPointFactory.create(1));
+        Item item = this.itemRepository.create(Long.valueOf(1), "test-name", "test-short-name", StubPointFactory.create(0),
+            StubPointFactory.create(1));
 
-        Map<String, Object> itemData = this.jdbcTemplate.queryForMap("SELECT id, collectionId, name FROM items");
+        Map<String, Object> itemData = this.jdbcTemplate.queryForMap("SELECT id, collectionId, name, shortName FROM items");
         assertEquals(Long.valueOf(1), itemData.get("collectionId"));
         assertEquals("test-name", itemData.get("name"));
+        assertEquals("test-short-name", itemData.get("shortName"));
         assertEquals(itemData.get("id"), item.getId());
         assertEquals(itemData.get("collectionId"), item.getCollectionId());
         assertEquals(itemData.get("name"), item.getName());
+        assertEquals(itemData.get("shortName"), item.getShortName());
 
         List<Point> points = item.getPoints();
         List<Map<String, Object>> pointsData = this.jdbcTemplate.queryForList("SELECT id, itemId, latitude, longitude, elevation FROM points");
@@ -130,60 +133,85 @@ public final class JdbcItemRepositoryTest extends AbstractJdbcRepositoryTest {
 
     @Test
     public void updateName() {
-        this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
-        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES(?, ?, ?)", 1, 0, "test-name");
-        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name) VALUES(?, ?, ?)", 2, 1, "test-name");
+        this.jdbcTemplate.update("INSERT INTO types(id, name, shortName) VALUES(?, ?, ?)", 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name, shortName) VALUES(?, ?, ?, ?)", 1, 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name, shortName) VALUES(?, ?, ?, ?)", 2, 1, "test-name", "test-short-name");
         this.jdbcTemplate.update("INSERT INTO points(id, itemId, latitude, longitude, elevation) VALUES(?, ?, ?, ?, ?)", 3, 2, 4, 5, 6);
         this.jdbcTemplate.update("INSERT INTO points(id, itemId, latitude, longitude, elevation) VALUES(?, ?, ?, ?, ?)", 7, 2, 8, 9, 10);
 
-        Item item = this.itemRepository.update(Long.valueOf(2), "new-test-name");
+        Item item = this.itemRepository.update(Long.valueOf(2), "new-test-name", null);
 
-        Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name FROM items WHERE id = ?", 2);
+        Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name, shortName FROM items WHERE id = ?", 2);
         assertEquals("new-test-name", data.get("name"));
+        assertEquals("test-short-name", data.get("shortName"));
         assertEquals(data.get("name"), item.getName());
+        assertEquals(data.get("shortName"), item.getShortName());
+        assertEquals(Long.valueOf(3), item.getPoints().get(0).getId());
+        assertEquals(Long.valueOf(7), item.getPoints().get(1).getId());
+    }
+
+    @Test
+    public void updateShortName() {
+        this.jdbcTemplate.update("INSERT INTO types(id, name, shortName) VALUES(?, ?, ?)", 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name, shortName) VALUES(?, ?, ?, ?)", 1, 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name, shortName) VALUES(?, ?, ?, ?)", 2, 1, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO points(id, itemId, latitude, longitude, elevation) VALUES(?, ?, ?, ?, ?)", 3, 2, 4, 5, 6);
+        this.jdbcTemplate.update("INSERT INTO points(id, itemId, latitude, longitude, elevation) VALUES(?, ?, ?, ?, ?)", 7, 2, 8, 9, 10);
+
+        Item item = this.itemRepository.update(Long.valueOf(2), null, "new-test-short-name");
+
+        Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name, shortName FROM items WHERE id = ?", 2);
+        assertEquals("test-name", data.get("name"));
+        assertEquals("new-test-short-name", data.get("shortName"));
+        assertEquals(data.get("name"), item.getName());
+        assertEquals(data.get("shortName"), item.getShortName());
         assertEquals(Long.valueOf(3), item.getPoints().get(0).getId());
         assertEquals(Long.valueOf(7), item.getPoints().get(1).getId());
     }
 
     @Test
     public void updateEmptyPoints() {
-        this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
-        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES(?, ?, ?)", 1, 0, "test-name");
-        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name) VALUES(?, ?, ?)", 2, 1, "test-name");
+        this.jdbcTemplate.update("INSERT INTO types(id, name, shortName) VALUES(?, ?, ?)", 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name, shortName) VALUES(?, ?, ?, ?)", 1, 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name, shortName) VALUES(?, ?, ?, ?)", 2, 1, "test-name", "test-short-name");
         this.jdbcTemplate.update("INSERT INTO points(id, itemId, latitude, longitude, elevation) VALUES(?, ?, ?, ?, ?)", 3, 2, 4, 5, 6);
         this.jdbcTemplate.update("INSERT INTO points(id, itemId, latitude, longitude, elevation) VALUES(?, ?, ?, ?, ?)", 7, 2, 8, 9, 10);
 
-        Item item = this.itemRepository.update(Long.valueOf(2), "new-test-name", (List<Point>) null);
+        Item item = this.itemRepository.update(Long.valueOf(2), null, null, (List<Point>) null);
 
-        Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name FROM items WHERE id = ?", 2);
-        assertEquals("new-test-name", data.get("name"));
+        Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name, shortName FROM items WHERE id = ?", 2);
+        assertEquals("test-name", data.get("name"));
+        assertEquals("test-short-name", data.get("shortName"));
         assertEquals(data.get("name"), item.getName());
+        assertEquals(data.get("shortName"), item.getShortName());
         assertEquals(Long.valueOf(3), item.getPoints().get(0).getId());
         assertEquals(Long.valueOf(7), item.getPoints().get(1).getId());
     }
 
     @Test
     public void updatePoints() {
-        this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
-        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES(?, ?, ?)", 1, 0, "test-name");
-        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name) VALUES(?, ?, ?)", 2, 1, "test-name");
+        this.jdbcTemplate.update("INSERT INTO types(id, name, shortName) VALUES(?, ?, ?)", 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name, shortName) VALUES(?, ?, ?, ?)", 1, 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name, shortName) VALUES(?, ?, ?, ?)", 2, 1, "test-name", "test-short-name");
         this.jdbcTemplate.update("INSERT INTO points(id, itemId, latitude, longitude, elevation) VALUES(?, ?, ?, ?, ?)", 3, 2, 4, 5, 6);
         this.jdbcTemplate.update("INSERT INTO points(id, itemId, latitude, longitude, elevation) VALUES(?, ?, ?, ?, ?)", 7, 2, 8, 9, 10);
 
-        Item item = this.itemRepository.update(Long.valueOf(2), null, StubPointFactory.create(0), StubPointFactory.create(1));
+        Item item = this.itemRepository.update(Long.valueOf(2), null, null, StubPointFactory.create(0), StubPointFactory.create(1));
 
-        Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name FROM items WHERE id = ?", 2);
+        Map<String, Object> data = this.jdbcTemplate.queryForMap("SELECT name, shortName FROM items WHERE id = ?", 2);
         assertEquals("test-name", data.get("name"));
+        assertEquals("test-short-name", data.get("shortName"));
         assertEquals(data.get("name"), item.getName());
+        assertEquals(data.get("shortName"), item.getShortName());
         assertNotEquals(Long.valueOf(3), item.getPoints().get(0).getId());
         assertNotEquals(Long.valueOf(7), item.getPoints().get(1).getId());
     }
 
     @Test
     public void delete() {
-        this.jdbcTemplate.update("INSERT INTO types(id, name) VALUES(?, ?)", 0, "test-name");
-        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name) VALUES(?, ?, ?)", 1, 0, "test-name");
-        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name) VALUES(?, ?, ?)", 2, 1, "test-name");
+        this.jdbcTemplate.update("INSERT INTO types(id, name, shortName) VALUES(?, ?, ?)", 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO collections(id, typeId, name, shortName) VALUES(?, ?, ?, ?)", 1, 0, "test-name", "test-short-name");
+        this.jdbcTemplate.update("INSERT INTO items(id, collectionId, name, shortName) VALUES(?, ?, ?, ?)", 2, 1, "test-name", "test-short-name");
         this.jdbcTemplate.update("INSERT INTO points(id, itemId, latitude, longitude, elevation) VALUES(?, ?, ?, ?, ?)", 3, 2, 4, 5, 6);
         this.jdbcTemplate.update("INSERT INTO points(id, itemId, latitude, longitude, elevation) VALUES(?, ?, ?, ?, ?)", 7, 2, 8, 9, 10);
 

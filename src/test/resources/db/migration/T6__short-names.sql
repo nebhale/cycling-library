@@ -14,21 +14,11 @@
  * limitations under the License.
  */
 
-package com.nebhale.cyclinglibrary.web;
+ALTER TABLE types
+	ADD shortName VARCHAR(32);
 
-import static org.junit.Assert.assertEquals;
+ALTER TABLE collections
+	ADD shortName VARCHAR(32);
 
-import org.junit.Test;
-
-public class TypeInputTest {
-
-    @Test
-    public void test() {
-        TypeInput typeInput = new TypeInput("test-name", "test-short-name");
-
-        assertEquals("test-name", typeInput.getName());
-        assertEquals("test-short-name", typeInput.getShortName());
-        assertEquals("TypeInput [name=test-name, shortName=test-short-name]", typeInput.toString());
-    }
-
-}
+ALTER TABLE items
+	ADD shortName VARCHAR(32);
