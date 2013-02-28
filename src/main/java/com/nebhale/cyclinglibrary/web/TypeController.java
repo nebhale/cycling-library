@@ -52,7 +52,7 @@ final class TypeController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     Type create(@RequestBody TypeInput typeInput) {
-        return this.typeRepository.create(typeInput.getName());
+        return this.typeRepository.create(typeInput.getName(), typeInput.getShortName());
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{typeId}", produces = ApplicationMediaType.TYPE_VALUE)
@@ -64,7 +64,7 @@ final class TypeController {
     @RequestMapping(method = RequestMethod.PUT, value = "/{typeId}", consumes = ApplicationMediaType.TYPE_VALUE, produces = ApplicationMediaType.TYPE_VALUE)
     @ResponseBody
     Type update(@PathVariable Long typeId, @RequestBody TypeInput typeInput) {
-        return this.typeRepository.update(typeId, typeInput.getName());
+        return this.typeRepository.update(typeId, typeInput.getName(), typeInput.getShortName());
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{typeId}")

@@ -26,11 +26,12 @@ public class TypeTest {
 
     @Test
     public void test() {
-        Type type = new Type(Long.valueOf(0), "test-name", Long.valueOf(1), Long.valueOf(2));
+        Type type = new Type(Long.valueOf(0), "test-name", "test-short-name", Long.valueOf(1), Long.valueOf(2));
 
         assertEquals("test-name", type.getName());
+        assertEquals("test-short-name", type.getShortName());
         assertEquals(Sets.asSet(Long.valueOf(1), Long.valueOf(2)), type.getCollectionIds());
-        assertEquals("Type [name=test-name, collectionIds=[1, 2], getId()=0]", type.toString());
+        assertEquals("Type [name=test-name, shortName=test-short-name, collectionIds=[1, 2], getId()=0]", type.toString());
     }
 
 }

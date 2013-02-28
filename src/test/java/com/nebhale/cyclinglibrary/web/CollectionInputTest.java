@@ -24,10 +24,11 @@ public class CollectionInputTest {
 
     @Test
     public void test() {
-        CollectionInput collectionInput = new CollectionInput("test-name");
+        CollectionInput collectionInput = new CollectionInput("test-name", "test-short-name");
 
         assertEquals("test-name", collectionInput.getName());
-        assertEquals("CollectionInput [name=test-name]", collectionInput.toString());
+        assertEquals("test-short-name", collectionInput.getShortName());
+        assertEquals("CollectionInput [name=test-name, shortName=test-short-name]", collectionInput.toString());
     }
 
 }

@@ -53,7 +53,8 @@ final class ItemController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
     Task create(@PathVariable Long collectionId, @RequestBody ItemInput itemInput) {
-        return this.pointParser.parse(itemInput.getPoints(), new CreateCallback(this.itemRepository, collectionId, itemInput.getName()));
+        return this.pointParser.parse(itemInput.getPoints(),
+            new CreateCallback(this.itemRepository, collectionId, itemInput.getName(), itemInput.getShortName()));
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{itemId}", produces = ApplicationMediaType.ITEM_VALUE)
@@ -66,7 +67,8 @@ final class ItemController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     @ResponseBody
     Task update(@PathVariable Long itemId, @RequestBody ItemInput itemInput) {
-        return this.pointParser.parse(itemInput.getPoints(), new UpdateCallback(this.itemRepository, itemId, itemInput.getName()));
+        return this.pointParser.parse(itemInput.getPoints(),
+            new UpdateCallback(this.itemRepository, itemId, itemInput.getName(), itemInput.getShortName()));
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{itemId}")
@@ -82,15 +84,18 @@ final class ItemController {
 
         private final String name;
 
-        private CreateCallback(ItemRepository itemRepository, Long collectionId, String name) {
+        private final String shortName;
+
+        private CreateCallback(ItemRepository itemRepository, Long collectionId, String name, String shortName) {
             this.itemRepository = itemRepository;
             this.collectionId = collectionId;
             this.name = name;
+            this.shortName = shortName;
         }
 
         @Override
         public void finished(List<Point> points) {
-            this.itemRepository.create(this.collectionId, this.name, points);
+            this.itemRepository.create(this.collectionId, this.name, this.shortName, points);
         }
 
     }
@@ -103,17 +108,19 @@ final class ItemController {
 
         private final String name;
 
-        private UpdateCallback(ItemRepository itemRepository, Long itemId, String name) {
+        private final String shortName;
+
+        private UpdateCallback(ItemRepository itemRepository, Long itemId, String name, String shortName) {
             this.itemRepository = itemRepository;
             this.itemId = itemId;
             this.name = name;
+            this.shortName = shortName;
         }
 
         @Override
         public void finished(List<Point> points) {
-            this.itemRepository.update(this.itemId, this.name, points);
+            this.itemRepository.update(this.itemId, this.name, this.shortName, points);
         }
-
     }
 
 }

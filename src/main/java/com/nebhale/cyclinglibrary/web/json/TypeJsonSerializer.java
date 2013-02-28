@@ -36,6 +36,7 @@ final class TypeJsonSerializer extends StdSerializer<Type> {
     public void serialize(Type value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
         jgen.writeStartObject();
         jgen.writeStringField("name", value.getName());
+        jgen.writeStringField("shortName", value.getShortName());
         jgen.writeArrayFieldStart("links");
         jgen.writeObject(new Link("self", "types", value));
         for (Long collectiondId : value.getCollectionIds()) {

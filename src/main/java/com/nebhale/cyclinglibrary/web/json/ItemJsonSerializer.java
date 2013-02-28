@@ -36,6 +36,7 @@ final class ItemJsonSerializer extends StdSerializer<Item> {
     public void serialize(Item value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
         jgen.writeStartObject();
         jgen.writeStringField("name", value.getName());
+        jgen.writeStringField("shortName", value.getShortName());
         jgen.writeArrayFieldStart("links");
         jgen.writeObject(new Link("self", "types", value.getTypeId(), "collections", value.getCollectionId(), "items", value));
         jgen.writeEndArray();

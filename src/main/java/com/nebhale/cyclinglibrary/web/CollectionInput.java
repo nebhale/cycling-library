@@ -23,18 +23,25 @@ final class CollectionInput {
 
     private final String name;
 
+    private final String shortName;
+
     @JsonCreator
-    CollectionInput(@JsonProperty("name") String name) {
+    CollectionInput(@JsonProperty("name") String name, @JsonProperty("shortName") String shortName) {
         this.name = name;
+        this.shortName = shortName;
     }
 
     String getName() {
         return this.name;
     }
 
+    String getShortName() {
+        return this.shortName;
+    }
+
     @Override
     public String toString() {
-        return "CollectionInput [name=" + this.name + "]";
+        return "CollectionInput [name=" + this.name + ", shortName=" + this.shortName + "]";
     }
 
 }
