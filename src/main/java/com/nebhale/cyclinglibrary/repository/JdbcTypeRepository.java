@@ -18,8 +18,9 @@ package com.nebhale.cyclinglibrary.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -27,10 +28,8 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,18 +38,18 @@ import com.nebhale.cyclinglibrary.model.Type;
 @Repository
 final class JdbcTypeRepository implements TypeRepository {
 
-    private static final PreparedStatementCreatorFactory CREATE_STATEMENT = new PreparedStatementCreatorFactory("INSERT INTO types(name) VALUES(?)",
-        new int[] { Types.VARCHAR });
-
     private static final ResultSetExtractor<Type> TYPE_EXTRACTOR = new TypeResultSetExtractor();
 
     private static final ResultSetExtractor<Set<Type>> SET_EXTRACTOR = new SetResultSetExtractor();
 
     private final JdbcTemplate jdbcTemplate;
 
+    private final SimpleJdbcInsert createStatement;
+
     @Autowired
     JdbcTypeRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.createStatement = new SimpleJdbcInsert(dataSource).withTableName("types").usingGeneratedKeyColumns("id");
     }
 
     @Override
@@ -63,11 +62,12 @@ final class JdbcTypeRepository implements TypeRepository {
     @Override
     @Transactional(readOnly = false)
     public Type create(String name) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("name", name);
 
-        this.jdbcTemplate.update(CREATE_STATEMENT.newPreparedStatementCreator(new Object[] { name }), keyHolder);
+        long id = this.createStatement.executeAndReturnKey(parameters).longValue();
 
-        return read(keyHolder.getKey().longValue());
+        return read(id);
     }
 
     @Override

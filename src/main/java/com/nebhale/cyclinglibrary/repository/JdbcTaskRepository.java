@@ -18,18 +18,17 @@ package com.nebhale.cyclinglibrary.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,16 +38,16 @@ import com.nebhale.cyclinglibrary.model.Task;
 @Repository
 final class JdbcTaskRepository implements TaskRepository {
 
-    private static final PreparedStatementCreatorFactory CREATE_STATEMENT = new PreparedStatementCreatorFactory(
-        "INSERT INTO tasks(status, message) VALUES(?, ?)", new int[] { Types.VARCHAR, Types.VARCHAR });
-
     private static final RowMapper<Task> TASK_MAPPER = new TaskRowMapper();
 
     private final JdbcTemplate jdbcTemplate;
 
+    private final SimpleJdbcInsert createStatement;
+
     @Autowired
     JdbcTaskRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.createStatement = new SimpleJdbcInsert(dataSource).withTableName("tasks").usingGeneratedKeyColumns("id");
     }
 
     @Override
@@ -60,12 +59,13 @@ final class JdbcTaskRepository implements TaskRepository {
     @Override
     @Transactional(readOnly = false)
     public Task create(String format, Object... arguments) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("status", Status.IN_PROGRESS.toString());
+        parameters.put("message", String.format(format, arguments));
 
-        this.jdbcTemplate.update(
-            CREATE_STATEMENT.newPreparedStatementCreator(new Object[] { Status.IN_PROGRESS.toString(), String.format(format, arguments) }), keyHolder);
+        long id = this.createStatement.executeAndReturnKey(parameters).longValue();
 
-        return read(keyHolder.getKey().longValue());
+        return read(id);
     }
 
     @Override

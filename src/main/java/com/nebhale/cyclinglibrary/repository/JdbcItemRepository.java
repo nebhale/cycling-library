@@ -18,21 +18,20 @@ package com.nebhale.cyclinglibrary.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,16 +41,16 @@ import com.nebhale.cyclinglibrary.model.Point;
 @Repository
 final class JdbcItemRepository implements ItemRepository {
 
-    private static final PreparedStatementCreatorFactory CREATE_STATEMENT = new PreparedStatementCreatorFactory(
-        "INSERT INTO items(collectionId, name) VALUES(?, ?)", new int[] { Types.BIGINT, Types.VARCHAR });
-
     private static final ResultSetExtractor<Item> ITEM_EXTRACTOR = new ItemResultSetExtractor();
 
     private final JdbcTemplate jdbcTemplate;
 
+    private final SimpleJdbcInsert createStatement;
+
     @Autowired
     JdbcItemRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.createStatement = new SimpleJdbcInsert(dataSource).withTableName("items").usingGeneratedKeyColumns("id");
     }
 
     @Override
@@ -63,10 +62,11 @@ final class JdbcItemRepository implements ItemRepository {
     @Override
     @Transactional(readOnly = false)
     public Item create(Long collectionId, String name, List<Point> points) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("collectionId", collectionId);
+        parameters.put("name", name);
 
-        this.jdbcTemplate.update(CREATE_STATEMENT.newPreparedStatementCreator(new Object[] { collectionId, name }), keyHolder);
-        Long itemId = keyHolder.getKey().longValue();
+        long itemId = this.createStatement.executeAndReturnKey(parameters).longValue();
         insertPoints(itemId, points);
 
         return read(itemId);
