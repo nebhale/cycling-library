@@ -34,8 +34,10 @@ limitations under the License.
 		<aspectj.version>1.7.1</aspectj.version>
 		<bonecp.version>0.8.0-rc1</bonecp.version>
 		<flyway.version>2.0.3</flyway.version>
+		<ehcache.version>2.0.4</ehcache.version>
 		<h2.version>1.3.170</h2.version>
 		<jackson.version>2.1.0</jackson.version>
+		<jetty.version>8.1.9.v20130131</jetty.version>
 		<jsonpath.version>0.8.1</jsonpath.version>
 		<junit.version>4.11</junit.version>
 		<logback.version>1.0.9</logback.version>
@@ -105,6 +107,11 @@ limitations under the License.
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-web</artifactId>
+			<version>${ehcache.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
@@ -232,6 +239,29 @@ limitations under the License.
 					<source>7</source>
 					<target>7</target>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.mortbay.jetty</groupId>
+									<artifactId>jetty-runner</artifactId>
+									<version>${jetty.version}</version>
+									<destFileName>jetty-runner.jar</destFileName>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
