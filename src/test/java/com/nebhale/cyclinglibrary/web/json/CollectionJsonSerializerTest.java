@@ -38,6 +38,7 @@ public class CollectionJsonSerializerTest extends AbstractJsonSerializerTest<Col
         assertValue(result, "$.name", "test-name");
         assertValue(result, "$.shortName", "test-short-name");
         assertValue(result, "$.links[?(@.rel== 'self')].href", "http://localhost/types/0/collections/1");
+        assertValue(result, "$.links[?(@.rel== 'create-item')].href", "http://localhost/types/0/collections/1/items");
         assertValue(result, "$.links[?(@.rel== 'item')].href", "http://localhost/types/0/collections/1/items/2",
             "http://localhost/types/0/collections/1/items/3");
     }

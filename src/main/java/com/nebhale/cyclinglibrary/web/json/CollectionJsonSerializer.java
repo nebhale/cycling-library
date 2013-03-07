@@ -39,6 +39,7 @@ final class CollectionJsonSerializer extends StdSerializer<Collection> {
         jgen.writeStringField("shortName", value.getShortName());
         jgen.writeArrayFieldStart("links");
         jgen.writeObject(new Link("self", "types", value.getTypeId(), "collections", value));
+        jgen.writeObject(new Link("create-item", "types", value.getTypeId(), "collections", value, "items"));
         for (Long itemId : value.getItemIds()) {
             jgen.writeObject(new Link("item", "types", value.getTypeId(), "collections", value, "items", itemId));
         }
