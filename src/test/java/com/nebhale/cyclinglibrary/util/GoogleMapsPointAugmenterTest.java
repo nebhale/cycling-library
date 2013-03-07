@@ -22,6 +22,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -57,10 +59,10 @@ public class GoogleMapsPointAugmenterTest {
 
     @Test
     @SuppressWarnings("rawtypes")
-    public void augmentPoints() throws InterruptedException {
+    public void augmentPoints() throws InterruptedException, URISyntaxException {
         Double[][] points = new Double[0][0];
         List<String> encodedPolylines = Arrays.asList("encoded-polyline-0");
-        when(this.polylineEncoder.encode(1973, points)).thenReturn(encodedPolylines);
+        when(this.polylineEncoder.encode(1461, points)).thenReturn(encodedPolylines);
 
         Task task = new Task(Long.valueOf(0), Status.IN_PROGRESS, "test-message");
         when(this.taskRepository.create("Augmenting %d segments", 1)).thenReturn(task);
@@ -78,14 +80,14 @@ public class GoogleMapsPointAugmenterTest {
         response.put("results", results);
 
         when(
-            this.restTemplate.getForEntity("https://maps.googleapis.com/maps/api/elevation/json?sensor=false&locations=encoded-polyline-0", Map.class)).thenReturn(
-            new ResponseEntity<Map>(response, HttpStatus.OK));
+            this.restTemplate.getForEntity(new URI("https://maps.googleapis.com/maps/api/elevation/json?sensor=false&locations=encoded-polyline-0"),
+                Map.class)).thenReturn(new ResponseEntity<Map>(response, HttpStatus.OK));
 
         CountDownLatch countDownLatch = new CountDownLatch(1);
         StubPointAugmenterCallback callback = new StubPointAugmenterCallback(countDownLatch);
         this.pointAugmenter.augmentPoints(points, callback);
 
-        countDownLatch.await();
+        countDownLatch.await(250, TimeUnit.MILLISECONDS);
 
         assertEquals(1, callback.points.size());
         Point point = callback.points.get(0);
@@ -93,15 +95,16 @@ public class GoogleMapsPointAugmenterTest {
         assertEquals(Double.valueOf(2.0), point.getLongitude());
         assertEquals(Double.valueOf(3.0), point.getElevation());
 
-        verify(this.taskRepository).update(Long.valueOf(0), Status.SUCCESS, "Augmenting 100% complete");
+        verify(this.taskRepository).update(Long.valueOf(0), Status.IN_PROGRESS, "Augmenting %d%% complete", 100);
+        verify(this.taskRepository).update(Long.valueOf(0), Status.SUCCESS, "Augmentation complete");
     }
 
     @Test
     @SuppressWarnings("rawtypes")
-    public void augmentPointsFailure() throws InterruptedException {
+    public void augmentPointsFailure() throws InterruptedException, URISyntaxException {
         Double[][] points = new Double[0][0];
         List<String> encodedPolylines = Arrays.asList("encoded-polyline-0");
-        when(this.polylineEncoder.encode(1973, points)).thenReturn(encodedPolylines);
+        when(this.polylineEncoder.encode(1461, points)).thenReturn(encodedPolylines);
 
         Task task = new Task(Long.valueOf(0), Status.IN_PROGRESS, "test-message");
         when(this.taskRepository.create("Augmenting %d segments", 1)).thenReturn(task);
@@ -109,8 +112,8 @@ public class GoogleMapsPointAugmenterTest {
         Map<String, String> response = new HashMap<>();
         response.put("status", "FAIL");
         when(
-            this.restTemplate.getForEntity("https://maps.googleapis.com/maps/api/elevation/json?sensor=false&locations=encoded-polyline-0", Map.class)).thenReturn(
-            new ResponseEntity<Map>(response, HttpStatus.OK));
+            this.restTemplate.getForEntity(new URI("https://maps.googleapis.com/maps/api/elevation/json?sensor=false&locations=encoded-polyline-0"),
+                Map.class)).thenReturn(new ResponseEntity<Map>(response, HttpStatus.OK));
 
         CountDownLatch countDownLatch = new CountDownLatch(1);
         this.pointAugmenter.augmentPoints(points, new StubPointAugmenterCallback(countDownLatch));

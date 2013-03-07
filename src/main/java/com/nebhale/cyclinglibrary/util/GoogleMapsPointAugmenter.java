@@ -16,6 +16,8 @@
 
 package com.nebhale.cyclinglibrary.util;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +45,7 @@ final class GoogleMapsPointAugmenter implements PointAugmenter {
 
     private static final long DELAY_INCREMENT = 3 * 1000;
 
-    private static final int MAX_URL_LENGTH = 2048;
+    private static final int MAX_URL_LENGTH = 1536;
 
     private static final String ELEVATION_URL = "https://maps.googleapis.com/maps/api/elevation/json?sensor=false&locations=";
 
@@ -109,10 +111,11 @@ final class GoogleMapsPointAugmenter implements PointAugmenter {
             try {
                 for (int i = 0; i < futures.size(); i++) {
                     points.addAll(futures.get(i).get());
-                    this.taskRepository.update(this.task.getId(), Status.IN_PROGRESS, "Augmenting %d%% complete", i / futures.size());
+                    this.taskRepository.update(this.task.getId(), Status.IN_PROGRESS, "Augmenting %d%% complete",
+                        getPercentage(i + 1, futures.size()));
                 }
 
-                this.taskRepository.update(this.task.getId(), Status.SUCCESS, "Augmenting 100% complete");
+                this.taskRepository.update(this.task.getId(), Status.SUCCESS, "Augmentation complete");
                 this.callback.finished(points);
             } catch (InterruptedException | ExecutionException e) {
                 this.logger.error(e.getMessage(), e);
@@ -135,6 +138,10 @@ final class GoogleMapsPointAugmenter implements PointAugmenter {
             return futures;
         }
 
+        private int getPercentage(int numerator, int denominator) {
+            return (int) ((((float) numerator) / ((float) denominator)) * 100);
+        }
+
     }
 
     private static final class PointAugmentingCallable implements Callable<List<Point>> {
@@ -150,8 +157,8 @@ final class GoogleMapsPointAugmenter implements PointAugmenter {
 
         @SuppressWarnings({ "rawtypes", "unchecked" })
         @Override
-        public List<Point> call() throws Exception {
-            ResponseEntity<Map> response = this.restTemplate.getForEntity(this.uri, Map.class);
+        public List<Point> call() throws URISyntaxException {
+            ResponseEntity<Map> response = this.restTemplate.getForEntity(new URI(this.uri), Map.class);
 
             String status = (String) response.getBody().get("status");
             if (!"OK".equals(status)) {
