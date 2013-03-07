@@ -60,6 +60,7 @@ final class CollectionController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{collectionId}")
+    @ResponseBody
     void delete(@PathVariable Long collectionId) {
         this.collectionRepository.delete(collectionId);
     }

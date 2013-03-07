@@ -68,6 +68,7 @@ final class TypeController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{typeId}")
+    @ResponseBody
     void delete(@PathVariable Long typeId) {
         this.typeRepository.delete(typeId);
     }

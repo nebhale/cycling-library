@@ -52,6 +52,7 @@ final class TaskController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{taskId}")
+    @ResponseBody
     void delete(@PathVariable Long taskId) {
         this.taskRepository.delete(taskId);
     }
