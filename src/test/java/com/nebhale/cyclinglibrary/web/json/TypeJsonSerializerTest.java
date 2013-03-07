@@ -38,6 +38,7 @@ public class TypeJsonSerializerTest extends AbstractJsonSerializerTest<Type> {
         assertValue(result, "$.name", "test-name");
         assertValue(result, "$.shortName", "test-short-name");
         assertValue(result, "$.links[?(@.rel== 'self')].href", "http://localhost/types/0");
+        assertValue(result, "$.links[?(@.rel== 'create-collection')].href", "http://localhost/types/0/collections");
         assertValue(result, "$.links[?(@.rel== 'collection')].href", "http://localhost/types/0/collections/1",
             "http://localhost/types/0/collections/2");
     }

@@ -36,7 +36,7 @@ public class GooglePolylineEncoderTest {
         List<String> encodedPolylines = this.polylineEncoder.encode(Integer.MAX_VALUE, points);
 
         assertEquals(1, encodedPolylines.size());
-        assertEquals("enc:_p~iF~ps|U_ulLnnqC_mqNvxq`@", encodedPolylines.get(0));
+        assertEquals("enc:_p~iF~ps%7CU_ulLnnqC_mqNvxq%60@", encodedPolylines.get(0));
     }
 
     @Test
@@ -49,11 +49,11 @@ public class GooglePolylineEncoderTest {
             new Double[] { 40.7, -120.95 }, //
             new Double[] { 43.252, -126.453 } };
 
-        List<String> encodedPolylines = this.polylineEncoder.encode(31, points);
+        List<String> encodedPolylines = this.polylineEncoder.encode(35, points);
 
         assertEquals(2, encodedPolylines.size());
-        assertEquals("enc:_p~iF~ps|U_ulLnnqC_mqNvxq`@", encodedPolylines.get(0));
-        assertEquals("enc:_p~iF~ps|U_ulLnnqC_mqNvxq`@", encodedPolylines.get(1));
+        assertEquals("enc:_p~iF~ps%7CU_ulLnnqC_mqNvxq%60@", encodedPolylines.get(0));
+        assertEquals("enc:_p~iF~ps%7CU_ulLnnqC_mqNvxq%60@", encodedPolylines.get(1));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class GooglePolylineEncoderTest {
 
         String encodedPolyline = this.polylineEncoder.encodeSingle(Integer.MAX_VALUE, points);
 
-        assertEquals("enc:_p~iF~ps|U_ulLnnqC_mqNvxq`@", encodedPolyline);
+        assertEquals("enc:_p~iF~ps%7CU_ulLnnqC_mqNvxq%60@", encodedPolyline);
     }
 
     @Test
@@ -78,9 +78,9 @@ public class GooglePolylineEncoderTest {
             new Double[] { 43.252, -126.453 }, //
             new Double[] { 0.0, 0.0 } };
 
-        String encodedPolyline = this.polylineEncoder.encodeSingle(31, points);
+        String encodedPolyline = this.polylineEncoder.encodeSingle(35, points);
 
-        assertEquals("enc:_p~iF~ps|U_ulLnnqC_mqNvxq`@", encodedPolyline);
+        assertEquals("enc:_p~iF~ps%7CU_ulLnnqC_mqNvxq%60@", encodedPolyline);
     }
 
 }

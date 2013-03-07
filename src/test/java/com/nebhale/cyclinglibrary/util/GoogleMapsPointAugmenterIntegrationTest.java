@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +44,7 @@ public class GoogleMapsPointAugmenterIntegrationTest {
         StubPointAugmenterCallback callback = new StubPointAugmenterCallback(countDownLatch);
 
         this.pointAugmenter.augmentPoints(points, callback);
-        countDownLatch.await();
+        countDownLatch.await(10, TimeUnit.SECONDS);
 
         assertEquals(3, callback.points.size());
 

@@ -72,6 +72,7 @@ final class ItemController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{itemId}")
+    @ResponseBody
     void delete(@PathVariable Long itemId) {
         this.itemRepository.delete(itemId);
     }

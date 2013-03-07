@@ -73,6 +73,7 @@ public class CollectionControllerIntegrationTest {
         .andExpect(jsonPath("$.name").value("test-name")) //
         .andExpect(jsonPath("$.shortName").value("test-short-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1")) //
+        .andExpect(jsonPath("$.links[?(@.rel== 'create-item')].href").value("http://localhost/types/0/collections/1/items")) //
         .andExpect(
             jsonPath("$.links[?(@.rel== 'item')].href").value(
                 Arrays.asList("http://localhost/types/0/collections/1/items/2", "http://localhost/types/0/collections/1/items/3")));
@@ -89,6 +90,7 @@ public class CollectionControllerIntegrationTest {
         .andExpect(jsonPath("$.name").value("test-name")) //
         .andExpect(jsonPath("$.shortName").value("test-short-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1")) //
+        .andExpect(jsonPath("$.links[?(@.rel== 'create-item')].href").value("http://localhost/types/0/collections/1/items")) //
         .andExpect(
             jsonPath("$.links[?(@.rel== 'item')].href").value(
                 Arrays.asList("http://localhost/types/0/collections/1/items/2", "http://localhost/types/0/collections/1/items/3")));
@@ -107,6 +109,7 @@ public class CollectionControllerIntegrationTest {
         .andExpect(jsonPath("$.name").value("new-test-name")) //
         .andExpect(jsonPath("$.shortName").value("new-test-short-name")) //
         .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1")) //
+        .andExpect(jsonPath("$.links[?(@.rel== 'create-item')].href").value("http://localhost/types/0/collections/1/items")) //
         .andExpect(
             jsonPath("$.links[?(@.rel== 'item')].href").value(
                 Arrays.asList("http://localhost/types/0/collections/1/items/2", "http://localhost/types/0/collections/1/items/3")));

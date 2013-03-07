@@ -16,6 +16,8 @@
 
 package com.nebhale.cyclinglibrary.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,7 +77,7 @@ final class GooglePolylineEncoder implements PolylineEncoder {
         String encodedLatitude = encodeSignedNumber(differenceLatitude);
         String encodedLongitude = encodeSignedNumber(differenceLongitude);
 
-        return new String[] { encodedLatitude, encodedLongitude };
+        return new String[] { encodeUriComponent(encodedLatitude), encodeUriComponent(encodedLongitude) };
     }
 
     private String encodeSignedNumber(int number) {
@@ -123,6 +125,64 @@ final class GooglePolylineEncoder implements PolylineEncoder {
 
     private boolean isLongerThan(StringBuilder builder, String[] encodedPoint, Integer maxLength) {
         return (builder.length() + encodedPoint[0].length() + encodedPoint[1].length()) > maxLength;
+    }
+
+    private String encodeUriComponent(String source) {
+        try {
+            byte[] bytes = encodeBytes(source.getBytes("UTF-8"));
+            return new String(bytes, "US-ASCII");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private byte[] encodeBytes(byte[] source) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(source.length);
+        for (byte element : source) {
+            int b = element;
+            if (b < 0) {
+                b += 256;
+            }
+            if (isAllowed(b)) {
+                bos.write(b);
+            } else {
+                bos.write('%');
+                char hex1 = Character.toUpperCase(Character.forDigit((b >> 4) & 0xF, 16));
+                char hex2 = Character.toUpperCase(Character.forDigit(b & 0xF, 16));
+                bos.write(hex1);
+                bos.write(hex2);
+            }
+        }
+        return bos.toByteArray();
+    }
+
+    private boolean isAllowed(int c) {
+        if (('=' == c) || ('+' == c) || ('&' == c)) {
+            return false;
+        } else {
+            return isPchar(c) || ('/' == c) || ('?' == c);
+        }
+    }
+
+    private boolean isAlpha(int c) {
+        return ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z'));
+    }
+
+    private boolean isDigit(int c) {
+        return (c >= '0') && (c <= '9');
+    }
+
+    private boolean isSubDelimiter(int c) {
+        return ('!' == c) || ('$' == c) || ('&' == c) || ('\'' == c) || ('(' == c) || (')' == c) || ('*' == c) || ('+' == c) || (',' == c)
+            || (';' == c) || ('=' == c);
+    }
+
+    private boolean isUnreserved(int c) {
+        return isAlpha(c) || isDigit(c) || ('-' == c) || ('.' == c) || ('_' == c) || ('~' == c);
+    }
+
+    private boolean isPchar(int c) {
+        return isUnreserved(c) || isSubDelimiter(c) || (':' == c) || ('@' == c);
     }
 
     private static final class EncodingContext {
