@@ -17,6 +17,9 @@
 package com.nebhale.cyclinglibrary.web;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,9 +30,16 @@ import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -61,12 +71,23 @@ public class GzipFilterTest {
         request.setContent("test-request-content".getBytes("UTF-8"));
 
         MockHttpServletResponse response = new MockHttpServletResponse();
-        MockFilterChain filterChain = new MockFilterChain();
+
+        FilterChain filterChain = mock(FilterChain.class);
+        doAnswer(new Answer<Void>() {
+
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                HttpServletRequest request = (HttpServletRequest) invocation.getArguments()[0];
+                assertEquals("test-request-content", readContent(request.getInputStream()));
+
+                HttpServletResponse response = (HttpServletResponse) invocation.getArguments()[1];
+                writeContent("test-response-content", response.getOutputStream());
+                return null;
+            }
+        }).when(filterChain).doFilter(any(ServletRequest.class), any(ServletResponse.class));
 
         this.filter.doFilterInternal(request, response, filterChain);
-        writeContent("test-response-content", filterChain.getResponse().getOutputStream());
 
-        assertEquals("test-request-content", readContent(filterChain.getRequest().getInputStream()));
         assertEquals("test-response-content", gunzipContent(response.getContentAsByteArray()));
     }
 
