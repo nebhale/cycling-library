@@ -62,15 +62,19 @@ final class GzipFilter extends OncePerRequestFilter {
             outputStream = new GZIPOutputStream(response.getOutputStream());
             newResponse = new DelegatingHttpServletResponse(response, outputStream);
         } else {
-            this.logger.warn("Uncompressed output requested for '{} {}'", request.getMethod(), request.getRequestURI());
+            String method = request.getMethod();
+            if (!"DELETE".equals(method)) {
+                this.logger.warn("Uncompressed output requested for '{} {}'", method, request.getRequestURI());
+            }
+
             outputStream = response.getOutputStream();
             newResponse = response;
         }
 
         filterChain.doFilter(newRequest, newResponse);
 
-        newResponse.flushBuffer();
         outputStream.close();
+        newResponse.flushBuffer();
     }
 
     private boolean sendsGzipEncoding(HttpServletRequest request) {
