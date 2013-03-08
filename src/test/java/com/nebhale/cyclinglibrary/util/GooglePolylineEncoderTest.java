@@ -18,9 +18,12 @@ package com.nebhale.cyclinglibrary.util;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+
+import com.nebhale.cyclinglibrary.model.Point;
 
 public class GooglePolylineEncoderTest {
 
@@ -36,7 +39,7 @@ public class GooglePolylineEncoderTest {
         List<String> encodedPolylines = this.polylineEncoder.encode(Integer.MAX_VALUE, points);
 
         assertEquals(1, encodedPolylines.size());
-        assertEquals("enc:_p~iF~ps%7CU_ulLnnqC_mqNvxq%60@", encodedPolylines.get(0));
+        assertEquals("enc:_p~iF~ps|U_ulLnnqC_mqNvxq`@", encodedPolylines.get(0));
     }
 
     @Test
@@ -52,35 +55,34 @@ public class GooglePolylineEncoderTest {
         List<String> encodedPolylines = this.polylineEncoder.encode(35, points);
 
         assertEquals(2, encodedPolylines.size());
-        assertEquals("enc:_p~iF~ps%7CU_ulLnnqC_mqNvxq%60@", encodedPolylines.get(0));
-        assertEquals("enc:_p~iF~ps%7CU_ulLnnqC_mqNvxq%60@", encodedPolylines.get(1));
+        assertEquals("enc:_p~iF~ps|U_ulLnnqC_mqNvxq`@", encodedPolylines.get(0));
+        assertEquals("enc:_p~iF~ps|U_ulLnnqC_mqNvxq`@", encodedPolylines.get(1));
     }
 
     @Test
     public void encodeSingleNoFilter() {
-        Double[][] points = new Double[][] { //
-        new Double[] { 38.5, -120.2 }, //
-            new Double[] { 40.7, -120.95 }, //
-            new Double[] { 43.252, -126.453 } };
+        List<Point> points = Arrays.asList( //
+            new Point(38.5, -120.2, 0.0), //
+            new Point(40.7, -120.95, 0.0), //
+            new Point(43.252, -126.453, 0.0));
 
         String encodedPolyline = this.polylineEncoder.encodeSingle(Integer.MAX_VALUE, points);
 
-        assertEquals("enc:_p~iF~ps%7CU_ulLnnqC_mqNvxq%60@", encodedPolyline);
+        assertEquals("enc:_p~iF~ps|U_ulLnnqC_mqNvxq`@", encodedPolyline);
     }
 
     @Test
     public void encodeSingleFilter() {
-        Double[][] points = new Double[][] { //
-        new Double[] { 38.5, -120.2 }, //
-            new Double[] { 0.0, 0.0 }, //
-            new Double[] { 40.7, -120.95 }, //
-            new Double[] { 0.0, 0.0 }, //
-            new Double[] { 43.252, -126.453 }, //
-            new Double[] { 0.0, 0.0 } };
+        List<Point> points = Arrays.asList( //
+            new Point(38.5, -120.2, 0.0), //
+            new Point(0.0, 0.0, 0.0), //
+            new Point(40.7, -120.95, 0.0), //
+            new Point(0.0, 0.0, 0.0), //
+            new Point(43.252, -126.453, 0.0), //
+            new Point(0.0, 0.0, 0.0));
 
-        String encodedPolyline = this.polylineEncoder.encodeSingle(35, points);
+        String encodedPolyline = this.polylineEncoder.encodeSingle(31, points);
 
-        assertEquals("enc:_p~iF~ps%7CU_ulLnnqC_mqNvxq%60@", encodedPolyline);
+        assertEquals("enc:_p~iF~ps|U_ulLnnqC_mqNvxq`@", encodedPolyline);
     }
-
 }

@@ -26,6 +26,7 @@ import com.nebhale.cyclinglibrary.repository.ItemRepository;
 import com.nebhale.cyclinglibrary.repository.TaskRepository;
 import com.nebhale.cyclinglibrary.repository.TypeRepository;
 import com.nebhale.cyclinglibrary.util.PointParser;
+import com.nebhale.cyclinglibrary.util.PolylineEncoder;
 
 @Configuration
 class IntegrationTestRepositoryConfiguration {
@@ -53,6 +54,11 @@ class IntegrationTestRepositoryConfiguration {
     @Bean
     PointParser pointParser() {
         return mock(PointParser.class);
+    }
+
+    @Bean
+    PolylineEncoder polylineEncoder() {
+        return mock(PolylineEncoder.class);
     }
 
 }

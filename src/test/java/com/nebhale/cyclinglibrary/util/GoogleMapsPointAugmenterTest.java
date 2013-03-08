@@ -62,7 +62,7 @@ public class GoogleMapsPointAugmenterTest {
     public void augmentPoints() throws InterruptedException, URISyntaxException {
         Double[][] points = new Double[0][0];
         List<String> encodedPolylines = Arrays.asList("encoded-polyline-0");
-        when(this.polylineEncoder.encode(1461, points)).thenReturn(encodedPolylines);
+        when(this.polylineEncoder.encode(1900, points)).thenReturn(encodedPolylines);
 
         Task task = new Task(Long.valueOf(0), Status.IN_PROGRESS, "test-message");
         when(this.taskRepository.create("Augmenting %d segments", 1)).thenReturn(task);
@@ -104,7 +104,7 @@ public class GoogleMapsPointAugmenterTest {
     public void augmentPointsFailure() throws InterruptedException, URISyntaxException {
         Double[][] points = new Double[0][0];
         List<String> encodedPolylines = Arrays.asList("encoded-polyline-0");
-        when(this.polylineEncoder.encode(1461, points)).thenReturn(encodedPolylines);
+        when(this.polylineEncoder.encode(1900, points)).thenReturn(encodedPolylines);
 
         Task task = new Task(Long.valueOf(0), Status.IN_PROGRESS, "test-message");
         when(this.taskRepository.create("Augmenting %d segments", 1)).thenReturn(task);
