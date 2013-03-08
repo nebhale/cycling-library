@@ -17,17 +17,27 @@
 package com.nebhale.cyclinglibrary.web;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 final class GzipFilter extends OncePerRequestFilter {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException,
@@ -37,18 +47,24 @@ final class GzipFilter extends OncePerRequestFilter {
         if (sendsGzipEncoding(request)) {
             newRequest = new DelegatingHttpServletRequest(request, new GZIPInputStream(request.getInputStream()));
         } else {
+            String method = request.getMethod();
+            if ("POST".equals(method) || "PUT".equals(method)) {
+                this.logger.warn("Uncompressed input received for '{} {}'", method, request.getRequestURI());
+            }
+
             newRequest = request;
         }
 
         HttpServletResponse newResponse;
         if (acceptsGzipEncoding(request)) {
+            response.setHeader("Content-Encoding", "gzip");
             newResponse = new DelegatingHttpServletResponse(response, new GZIPOutputStream(response.getOutputStream()));
         } else {
+            this.logger.warn("Uncompressed output requested for '{} {}'", request.getMethod(), request.getRequestURI());
             newResponse = response;
         }
 
-        // TODO Auto-generated method stub
-
+        filterChain.doFilter(newRequest, newResponse);
     }
 
     private boolean sendsGzipEncoding(HttpServletRequest request) {
@@ -57,11 +73,89 @@ final class GzipFilter extends OncePerRequestFilter {
 
     private boolean acceptsGzipEncoding(HttpServletRequest request) {
         return isGzipEncoding(request.getHeader("Accept-Encoding"));
-
     }
 
     private boolean isGzipEncoding(String encoding) {
-        return (encoding != null) && "gzip".equals(encoding);
+        return (encoding != null) && encoding.contains("gzip");
+    }
+
+    private static final class DelegatingHttpServletRequest extends HttpServletRequestWrapper {
+
+        private final ServletInputStream inputStream;
+
+        private DelegatingHttpServletRequest(HttpServletRequest delegate, InputStream inputStream) {
+            super(delegate);
+            this.inputStream = new DelegatingServletInputStream(inputStream);
+        }
+
+        @Override
+        public ServletInputStream getInputStream() throws IOException {
+            return this.inputStream;
+        }
+
+    }
+
+    private static final class DelegatingServletInputStream extends ServletInputStream {
+
+        private final InputStream sourceStream;
+
+        private DelegatingServletInputStream(InputStream sourceStream) {
+            this.sourceStream = sourceStream;
+        }
+
+        @Override
+        public int read() throws IOException {
+            return this.sourceStream.read();
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            this.sourceStream.close();
+        }
+
+    }
+
+    private static final class DelegatingHttpServletResponse extends HttpServletResponseWrapper {
+
+        private final ServletOutputStream outputStream;
+
+        private DelegatingHttpServletResponse(HttpServletResponse response, OutputStream outputStream) {
+            super(response);
+            this.outputStream = new DelegatingServletOutputStream(outputStream);
+        }
+
+        @Override
+        public ServletOutputStream getOutputStream() throws IOException {
+            return this.outputStream;
+        }
+    }
+
+    private static final class DelegatingServletOutputStream extends ServletOutputStream {
+
+        private final OutputStream targetStream;
+
+        private DelegatingServletOutputStream(OutputStream targetStream) {
+            this.targetStream = targetStream;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            this.targetStream.write(b);
+        }
+
+        @Override
+        public void flush() throws IOException {
+            super.flush();
+            this.targetStream.flush();
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            this.targetStream.close();
+        }
+
     }
 
 }
