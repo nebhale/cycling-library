@@ -27,6 +27,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -39,7 +40,10 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     ObjectMapper objectMapper() {
-        return new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.getFactory().configure(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM, false);
+
+        return objectMapper;
     }
 
     @Override
