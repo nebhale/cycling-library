@@ -72,9 +72,6 @@ final class GzipFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(newRequest, newResponse);
-
-        outputStream.close();
-        newResponse.flushBuffer();
     }
 
     private boolean sendsGzipEncoding(HttpServletRequest request) {
@@ -138,6 +135,11 @@ final class GzipFilter extends OncePerRequestFilter {
         @Override
         public ServletOutputStream getOutputStream() throws IOException {
             return this.outputStream;
+        }
+
+        @Override
+        public void setContentLength(int len) {
+            // Don't allow content length to be written since it'll be wrong
         }
     }
 
