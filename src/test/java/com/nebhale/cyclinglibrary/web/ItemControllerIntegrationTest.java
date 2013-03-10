@@ -92,7 +92,10 @@ public class ItemControllerIntegrationTest {
         .andExpect(content().contentType(ApplicationMediaType.ITEM)) //
         .andExpect(jsonPath("$.name").value("test-name")) //
         .andExpect(jsonPath("$.shortName").value("test-short-name")) //
-        .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1/items/2"));
+        .andExpect(jsonPath("$.links[?(@.rel== 'self')].href").value("http://localhost/types/0/collections/1/items/2")) //
+        .andExpect(jsonPath("$.links[?(@.rel== 'points-raw')].href").value("http://localhost/types/0/collections/1/items/2/points")) //
+        .andExpect(jsonPath("$.links[?(@.rel== 'points-image')].href").value("http://localhost/types/0/collections/1/items/2/points")) //
+        .andExpect(jsonPath("$.links[?(@.rel== 'points-gpx')].href").value("http://localhost/types/0/collections/1/items/2/points"));
     }
 
     @Test

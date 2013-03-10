@@ -38,6 +38,9 @@ public class ItemJsonSerializerTest extends AbstractJsonSerializerTest<Item> {
         assertValue(result, "$.name", "test-name");
         assertValue(result, "$.shortName", "test-short-name");
         assertValue(result, "$.links[?(@.rel== 'self')].href", "http://localhost/types/0/collections/1/items/2");
+        assertValue(result, "$.links[?(@.rel== 'points-raw')].href", "http://localhost/types/0/collections/1/items/2/points");
+        assertValue(result, "$.links[?(@.rel== 'points-image')].href", "http://localhost/types/0/collections/1/items/2/points");
+        assertValue(result, "$.links[?(@.rel== 'points-gpx')].href", "http://localhost/types/0/collections/1/items/2/points");
     }
 
 }

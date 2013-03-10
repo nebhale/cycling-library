@@ -39,6 +39,9 @@ final class ItemJsonSerializer extends StdSerializer<Item> {
         jgen.writeStringField("shortName", value.getShortName());
         jgen.writeArrayFieldStart("links");
         jgen.writeObject(new Link("self", "types", value.getTypeId(), "collections", value.getCollectionId(), "items", value));
+        jgen.writeObject(new Link("points-raw", "types", value.getTypeId(), "collections", value.getCollectionId(), "items", value, "points"));
+        jgen.writeObject(new Link("points-image", "types", value.getTypeId(), "collections", value.getCollectionId(), "items", value, "points"));
+        jgen.writeObject(new Link("points-gpx", "types", value.getTypeId(), "collections", value.getCollectionId(), "items", value, "points"));
         jgen.writeEndArray();
         jgen.writeEndObject();
     }

@@ -18,6 +18,8 @@ package com.nebhale.cyclinglibrary.util;
 
 import java.util.List;
 
+import com.nebhale.cyclinglibrary.model.Point;
+
 /**
  * A utility that encodes points into a polyline format
  */
@@ -41,6 +43,6 @@ public interface PolylineEncoder {
      * @param points The points to encode into a polyline
      * @return The encoded polyline
      */
-    String encodeSingle(Integer maxLength, Double[][] points);
+    String encodeSingle(Integer maxLength, List<Point> points);
 
 }

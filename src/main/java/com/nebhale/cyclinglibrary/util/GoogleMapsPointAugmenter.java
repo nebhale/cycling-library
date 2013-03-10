@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.nebhale.cyclinglibrary.model.Point;
 import com.nebhale.cyclinglibrary.model.Status;
@@ -45,9 +46,7 @@ final class GoogleMapsPointAugmenter implements PointAugmenter {
 
     private static final long DELAY_INCREMENT = 3 * 1000;
 
-    private static final int MAX_URL_LENGTH = 1536;
-
-    private static final String ELEVATION_URL = "https://maps.googleapis.com/maps/api/elevation/json?sensor=false&locations=";
+    private static final int MAX_ENCODED_LENGTH = 1900;
 
     private final PolylineEncoder polylineEncoder;
 
@@ -68,7 +67,7 @@ final class GoogleMapsPointAugmenter implements PointAugmenter {
 
     @Override
     public Task augmentPoints(Double[][] points, PointAugmenterCallback callback) {
-        List<String> encodedPolylines = this.polylineEncoder.encode(MAX_URL_LENGTH - ELEVATION_URL.length(), points);
+        List<String> encodedPolylines = this.polylineEncoder.encode(MAX_ENCODED_LENGTH, points);
         Task task = this.taskRepository.create("Augmenting %d segments", encodedPolylines.size());
 
         this.scheduledExecutorService.execute(new PointsAugmentingRunnable(this.restTemplate, this.scheduledExecutorService, this.taskRepository,
@@ -127,7 +126,15 @@ final class GoogleMapsPointAugmenter implements PointAugmenter {
             List<Future<List<Point>>> futures = new ArrayList<>(this.encodedPolylines.size());
 
             for (int i = 0; i < this.encodedPolylines.size(); i++) {
-                PointAugmentingCallable callable = new PointAugmentingCallable(this.restTemplate, ELEVATION_URL + this.encodedPolylines.get(i));
+                URI uri = UriComponentsBuilder.newInstance() //
+                .scheme("https") //
+                .host("maps.googleapis.com") //
+                .path("/maps/api/elevation/json") //
+                .queryParam("sensor", false) //
+                .queryParam("locations", this.encodedPolylines.get(i)) //
+                .build().toUri();
+                PointAugmentingCallable callable = new PointAugmentingCallable(this.restTemplate, uri);
+
                 long delay = i * DELAY_INCREMENT;
 
                 ScheduledFuture<List<Point>> future = this.scheduledExecutorService.schedule(callable, delay, TimeUnit.MILLISECONDS);
@@ -148,9 +155,9 @@ final class GoogleMapsPointAugmenter implements PointAugmenter {
 
         private final RestTemplate restTemplate;
 
-        private final String uri;
+        private final URI uri;
 
-        private PointAugmentingCallable(RestTemplate restTemplate, String uri) {
+        private PointAugmentingCallable(RestTemplate restTemplate, URI uri) {
             this.restTemplate = restTemplate;
             this.uri = uri;
         }
@@ -158,7 +165,7 @@ final class GoogleMapsPointAugmenter implements PointAugmenter {
         @SuppressWarnings({ "rawtypes", "unchecked" })
         @Override
         public List<Point> call() throws URISyntaxException {
-            ResponseEntity<Map> response = this.restTemplate.getForEntity(new URI(this.uri), Map.class);
+            ResponseEntity<Map> response = this.restTemplate.getForEntity(this.uri, Map.class);
 
             String status = (String) response.getBody().get("status");
             if (!"OK".equals(status)) {

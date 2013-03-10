@@ -16,6 +16,7 @@
 
 package com.nebhale.cyclinglibrary.web;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -49,6 +51,7 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(createJsonConverter());
+        converters.add(createXmlConverter());
     }
 
     private HttpMessageConverter<?> createJsonConverter() {
@@ -58,8 +61,15 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
             ApplicationMediaType.TYPE, //
             ApplicationMediaType.COLLECTION, //
             ApplicationMediaType.ITEM, //
-            ApplicationMediaType.ITEM_JSON, //
+            ApplicationMediaType.POINTS_JSON, //
             ApplicationMediaType.TASK));
+
+        return converter;
+    }
+
+    private HttpMessageConverter<?> createXmlConverter() {
+        StringHttpMessageConverter converter = new StringHttpMessageConverter(Charset.forName("UTF-8"));
+        converter.setSupportedMediaTypes(Arrays.asList(ApplicationMediaType.POINTS_XML));
 
         return converter;
     }

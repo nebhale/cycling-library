@@ -16,12 +16,12 @@
 
 package com.nebhale.cyclinglibrary.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
+
+import com.nebhale.cyclinglibrary.model.Point;
 
 @Component
 final class GooglePolylineEncoder implements PolylineEncoder {
@@ -56,7 +56,7 @@ final class GooglePolylineEncoder implements PolylineEncoder {
     }
 
     @Override
-    public String encodeSingle(Integer maxLength, Double[][] points) {
+    public String encodeSingle(Integer maxLength, List<Point> points) {
         return encode(maxLength, filter(maxLength, points)).get(0);
     }
 
@@ -77,7 +77,7 @@ final class GooglePolylineEncoder implements PolylineEncoder {
         String encodedLatitude = encodeSignedNumber(differenceLatitude);
         String encodedLongitude = encodeSignedNumber(differenceLongitude);
 
-        return new String[] { encodeUriComponent(encodedLatitude), encodeUriComponent(encodedLongitude) };
+        return new String[] { encodedLatitude, encodedLongitude };
     }
 
     private String encodeSignedNumber(int number) {
@@ -105,18 +105,24 @@ final class GooglePolylineEncoder implements PolylineEncoder {
         return encoded.toString();
     }
 
-    private Double[][] filter(Integer maxLength, Double[][] points) {
+    private Double[][] filter(Integer maxLength, List<Point> points) {
         Double[][] filtered;
 
-        if ((points.length * ENCODED_POINT_SIZE) < maxLength) {
-            filtered = points;
-        } else {
-            int interval = points.length / (maxLength / ENCODED_POINT_SIZE);
-
-            filtered = new Double[points.length / interval][];
+        if ((points.size() * ENCODED_POINT_SIZE) < maxLength) {
+            filtered = new Double[points.size()][];
 
             for (int i = 0; i < filtered.length; i++) {
-                filtered[i] = points[i * interval];
+                Point point = points.get(i);
+                filtered[i] = new Double[] { point.getLatitude(), point.getLongitude() };
+            }
+        } else {
+            int interval = points.size() / (maxLength / ENCODED_POINT_SIZE);
+
+            filtered = new Double[points.size() / interval][];
+
+            for (int i = 0; i < filtered.length; i++) {
+                Point point = points.get(i * interval);
+                filtered[i] = new Double[] { point.getLatitude(), point.getLongitude() };
             }
         }
 
@@ -125,64 +131,6 @@ final class GooglePolylineEncoder implements PolylineEncoder {
 
     private boolean isLongerThan(StringBuilder builder, String[] encodedPoint, Integer maxLength) {
         return (builder.length() + encodedPoint[0].length() + encodedPoint[1].length()) > maxLength;
-    }
-
-    private String encodeUriComponent(String source) {
-        try {
-            byte[] bytes = encodeBytes(source.getBytes("UTF-8"));
-            return new String(bytes, "US-ASCII");
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private byte[] encodeBytes(byte[] source) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(source.length);
-        for (byte element : source) {
-            int b = element;
-            if (b < 0) {
-                b += 256;
-            }
-            if (isAllowed(b)) {
-                bos.write(b);
-            } else {
-                bos.write('%');
-                char hex1 = Character.toUpperCase(Character.forDigit((b >> 4) & 0xF, 16));
-                char hex2 = Character.toUpperCase(Character.forDigit(b & 0xF, 16));
-                bos.write(hex1);
-                bos.write(hex2);
-            }
-        }
-        return bos.toByteArray();
-    }
-
-    private boolean isAllowed(int c) {
-        if (('=' == c) || ('+' == c) || ('&' == c)) {
-            return false;
-        } else {
-            return isPchar(c) || ('/' == c) || ('?' == c);
-        }
-    }
-
-    private boolean isAlpha(int c) {
-        return ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z'));
-    }
-
-    private boolean isDigit(int c) {
-        return (c >= '0') && (c <= '9');
-    }
-
-    private boolean isSubDelimiter(int c) {
-        return ('!' == c) || ('$' == c) || ('&' == c) || ('\'' == c) || ('(' == c) || (')' == c) || ('*' == c) || ('+' == c) || (',' == c)
-            || (';' == c) || ('=' == c);
-    }
-
-    private boolean isUnreserved(int c) {
-        return isAlpha(c) || isDigit(c) || ('-' == c) || ('.' == c) || ('_' == c) || ('~' == c);
-    }
-
-    private boolean isPchar(int c) {
-        return isUnreserved(c) || isSubDelimiter(c) || (':' == c) || ('@' == c);
     }
 
     private static final class EncodingContext {
