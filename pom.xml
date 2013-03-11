@@ -346,4 +346,9 @@ limitations under the License.
 		<url>https://github.com/nebhale/cycling-library</url>
 	</scm>
 
+	<ciManagement>
+		<system>Travis</system>
+		<url>https://travis-ci.org/nebhale/cycling-library</url>
+	</ciManagement>
+
 </project>
